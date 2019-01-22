@@ -8,4 +8,4 @@ FN: **1601681071**.
 
 Group: **STD**.
 
-E-mail: **smechkov@outlook.com
+E-mail: **smechkov@outlook.com**
