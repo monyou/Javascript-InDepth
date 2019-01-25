@@ -30,7 +30,7 @@ class Client {
 }
 
 //Main Collection of all Occasions
-var occasionsCollection = [];
+let occasionsCollection = [];
 
 var OccasionsOrganizer = {
     storeListOfOccasions: function (occasions) {
@@ -58,13 +58,23 @@ var OccasionsOrganizer = {
                 console.log(`${occasionsCollection[i].id}. ${occasionsCollection[i].name} : 18+`);
             }
         }
+    },
+
+    deleteOccasion: function (occasionId) {
+        if (occasionsCollection.length < 1) {
+            return console.log("No occasions avaliable. Delete operation canceled!");
+        }
+        if (arguments.length !== 1 || (typeof (occasionId) !== 'number' && occasionId < 1)) {
+            return console.log("Please provide only occasion id (id > 0)");
+        }
+
+        console.log(`Occasion -> 'id:${occasionId}, name:${occasionsCollection[occasionId-1].name}' <- was deleted successfuly!`);
+        occasionsCollection.splice(occasionId - 1, 1);
     }
 }
 
-// Testing so far
-var a = new Occasion("House party in Romania!", false);
-var b = new Occasion("Beer party!", false);
-var c = new Occasion("Birthday with friends.", true);
-OccasionsOrganizer.storeListOfOccasions([a, b, c]);
-OccasionsOrganizer.showOccasions();
+// Testing
+t1();
+t2();
+t3();
 console.log(occasionsCollection);
