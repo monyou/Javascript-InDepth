@@ -27,3 +27,25 @@ function t4() {
 function t5() {
     EventsOrganizer.updateEvent(3, "My New Occasion - Adult Shopping!", false);
 }
+
+//Testing Excercise 6
+function t6() {
+    var client = new Client("Simeon", "Mechkov", 22, "male");
+    var client2 = new Client("Krasimira", "Piskacheva", 21, "female");
+    var client3 = new Client("Georgi", "Vaklinov", 23, "male");
+    EventsOrganizer.addClientToEvent(client, 1);
+    EventsOrganizer.addClientToEvent(client2, 1);
+    EventsOrganizer.addClientToEvent(client3, 1);
+}
+
+//Testing Excercise 7
+function t7() {
+    EventsOrganizer.showClientsOfEvent(1);
+    EventsOrganizer.showClientsOfEvent(1, "female");
+}
+
+//Testing Excercise 8
+function t8() {
+    clientToDelete = new Client("Georgi", "Vaklinov", 23, "male");
+    EventsOrganizer.deleteClientFromEvent(clientToDelete, 1);
+}
