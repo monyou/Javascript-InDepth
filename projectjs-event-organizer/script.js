@@ -1,10 +1,9 @@
-// !!! I USE OCCASION INSTEAD EVENTS BRCAUSE EVENTS IS A SYSTEM CLASS AND THERE IS INTERFERENCE
-class Occasion {
+let Event = class {
     constructor(name, isForKids) {
         if (typeof (name) !== 'string' || typeof (isForKids) !== 'boolean') {
-            return console.log("Unvalid occasion!");
+            return console.log("Unvalid event!");
         }
-        this.id = Occasion.incrementId();
+        this.id = Event.incrementId();
         this.name = name;
         this.isForKids = isForKids;
         this.clients = [];
@@ -17,7 +16,7 @@ class Occasion {
     }
 }
 
-class Client {
+let Client = class {
     constructor(firstName, lastName, gender, age) {
         if (typeof (firstName, lastName, gender) !== 'string' || typeof (age) !== 'number') {
             return console.log("Unvalid client!");
@@ -29,108 +28,108 @@ class Client {
     }
 }
 
-//Main Collection of all Occasions
-let occasionsCollection = [];
+//Main Collection of all Events
+let eventsCollection = [];
 
-var OccasionsOrganizer = {
-    storeListOfOccasions: function (occasions) {
-        if (arguments.length !== 1 || !Array.isArray(occasions)) {
-            return console.log("Please provide a collection with occasions!");
+var EventsOrganizer = {
+    storeListOfEvents: function (events) {
+        if (arguments.length !== 1 || !Array.isArray(events)) {
+            return console.log("Please provide a collection with events!");
         }
 
-        for (var i = 0; i < occasions.length; i++) {
-            occasionsCollection.push(occasions[i]);
+        for (var i = 0; i < events.length; i++) {
+            eventsCollection.push(events[i]);
         }
 
-        console.log(`Occasion list was stored successfuly!`);
+        console.log(`Events list was stored successfuly!`);
     },
 
-    showOccasions: function () {
+    showEvents: function () {
         if (arguments.length != 0) {
-            return console.log("Invalid method 'OccasionOrganizer.showOccasions()' !\nNo arguments allowed in this method!");
+            return console.log("Invalid method 'EventsOrganizer.showEvents()' !\nNo arguments allowed in this method!");
         }
-        if (occasionsCollection.length < 1) {
-            return console.log("No occasions avaliable");
+        if (eventsCollection.length < 1) {
+            return console.log("No events avaliable");
         }
 
-        console.log("Occasions:");
-        for (var i = 0; i < occasionsCollection.length; i++) {
-            if (occasionsCollection[i].isForKids === true) {
-                console.log(`${occasionsCollection[i].id}. ${occasionsCollection[i].name} : All ages`);
+        console.log("Events:");
+        for (var i = 0; i < eventsCollection.length; i++) {
+            if (eventsCollection[i].isForKids === true) {
+                console.log(`${eventsCollection[i].id}. ${eventsCollection[i].name} : All ages`);
             } else {
-                console.log(`${occasionsCollection[i].id}. ${occasionsCollection[i].name} : 18+`);
+                console.log(`${eventsCollection[i].id}. ${eventsCollection[i].name} : 18+`);
             }
         }
     },
 
-    deleteOccasion: function (occasionId) {
-        if (occasionsCollection.length < 1) {
-            return console.log("No occasions avaliable. Delete operation failed!");
+    deleteEvent: function (eventId) {
+        if (eventsCollection.length < 1) {
+            return console.log("No events avaliable. Delete operation failed!");
         }
-        if (arguments.length !== 1 || typeof (occasionId) !== 'number' || occasionId < 1) {
-            return console.log("Please provide only occasion id (id > 0)");
+        if (arguments.length !== 1 || typeof (eventId) !== 'number' || eventId < 1) {
+            return console.log("Please provide only event id (id > 0)");
         }
 
         var objectFound;
-        for (var i = 0; i < occasionsCollection.length; i++) {
-            if (occasionsCollection[i].id === occasionId) {
+        for (var i = 0; i < eventsCollection.length; i++) {
+            if (eventsCollection[i].id === eventId) {
                 objectFound = i;
                 break;
             }
         }
 
         if (!objectFound) {
-            return console.log("Occasion with this id not found! Delete operation canceled!");
+            return console.log("Event with this id not found! Delete operation canceled!");
         } else {
-            console.log(`Occasion -> 'id:${occasionsCollection[objectFound].id}, name:${occasionsCollection[objectFound].name}' <- was deleted successfuly!`);
-            occasionsCollection.splice(objectFound, 1);
+            console.log(`Event -> 'id:${eventsCollection[objectFound].id}, name:${eventsCollection[objectFound].name}' <- was deleted successfuly!`);
+            eventsCollection.splice(objectFound, 1);
         }
 
     },
 
-    addOccasion: function (name, isForKids = true) {
+    addEvent: function (name, isForKids = true) {
         if (arguments.length < 1 || arguments.length > 2) {
             return console.log("Please specify these arguments: name and isForKids(optional) !");
         }
         if (typeof (name) !== 'string' || typeof (isForKids) !== 'boolean') {
             return console.log("Unvalid arguments found!\n\tname must be a string!\n\tisForKids must be a boolean!\nAdd operation failed!");
         }
-        var occasion = new Occasion(name, isForKids);
-        occasionsCollection.push(occasion);
+        var event = new Event(name, isForKids);
+        eventsCollection.push(event);
 
-        console.log(`Occasion -> 'id:${Occasion.latestId}, name:${name}' <- was added successfuly!`);
+        console.log(`Event -> 'id:${Event.latestId}, name:${name}' <- was added successfuly!`);
     },
 
-    updateOccasion: function (occasionId, newName, newIsForKids = true) {
-        if (occasionsCollection.length < 1) {
-            return console.log("No occasions avaliable. Update operation failed!");
+    updateEvent: function (eventId, newName, newIsForKids = true) {
+        if (eventsCollection.length < 1) {
+            return console.log("No events avaliable. Update operation failed!");
         }
         if (arguments.length < 1 || arguments.length > 3) {
-            return console.log("Please specify these arguments: occasionID, name and isForKids(optional) !");
+            return console.log("Please specify these arguments: eventId, name and isForKids(optional) !");
         }
-        if (typeof (occasionId) !== 'number' || occasionId < 1 || typeof (newName) !== 'string' || typeof (newIsForKids) !== 'boolean') {
-            return console.log("Unvalid arguments found!\n\toccasionId must be interger greater than 0 !\n\tname must be a string!\n\tisForKids must be a boolean!\nUpdate operation failed!");
+        if (typeof (eventId) !== 'number' || eventId < 1 || typeof (newName) !== 'string' || typeof (newIsForKids) !== 'boolean') {
+            return console.log("Unvalid arguments found!\n\eventId must be interger greater than 0 !\n\tname must be a string!\n\tisForKids must be a boolean!\nUpdate operation failed!");
         }
 
         var objectFound;
-        for (var i = 0; i < occasionsCollection.length; i++) {
-            if (occasionsCollection[i].id === occasionId) {
+        for (var i = 0; i < eventsCollection.length; i++) {
+            if (eventsCollection[i].id === eventId) {
                 objectFound = i;
                 break;
             }
         }
 
         if (!objectFound) {
-            return console.log("Occasion with this id not found! Update operation canceled!");
+            return console.log("Event with this id not found! Update operation canceled!");
         } else {
-            var savedLastId = Occasion.latestId;
-            Occasion.latestId = occasionId - 1;
-            occasionsCollection.splice(objectFound, 1);
-            var newOccasion = new Occasion(newName, newIsForKids);
-            occasionsCollection.splice(objectFound, 0, newOccasion);
-            Occasion.latestId = savedLastId;
+            var savedLastId = Event.latestId;
+            Event.latestId = eventId - 1;
+            eventsCollection.splice(objectFound, 1);
+            var newEvent = new Event(newName, newIsForKids);
+            eventsCollection.splice(objectFound, 0, newEvent);
+            Event.latestId = savedLastId;
 
-            console.log(`Occasion -> 'id:${occasionId}' <- was updated successfuly!`);
+            console.log(`Event -> 'id:${eventId}' <- was updated successfuly!`);
         }
     }
 }
@@ -146,4 +145,4 @@ t4();
 console.log("===================================================================");
 t5();
 console.log("===================================================================");
-console.log(occasionsCollection);
+console.log(eventsCollection);
