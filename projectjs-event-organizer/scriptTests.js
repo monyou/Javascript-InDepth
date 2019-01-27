@@ -27,7 +27,7 @@ function t4() {
 
 //Excercise 5
 function t5() {
-    var newEvent = new Event("My New Event - Adult Shopping!", false);
+    var newEvent = new Event("My New Event - Adult Shopping!", false, "01.31.2019");
     EventsOrganizer.updateEvent(3, newEvent);
 }
 
@@ -64,4 +64,23 @@ function ta11() {
 //Exercise 3
 function ta13() {
     EventsOrganizer.showEventWithMaxClients();
+}
+
+//Exercise 4
+function ta14() {
+    EventsOrganizer.showEventsForKids();
+}
+
+//Exercise 6
+function ta16() {
+    //Show all events that have date
+    EventsOrganizer.filterEvents("Events With Date", function (element) {
+        var eventsWithDate = [];
+        for (let i = 0; i < element.length; i++) {
+            if (element[i].date !== '') {
+                eventsWithDate.push(element[i]);
+            }
+        }
+        return eventsWithDate;
+    });
 }

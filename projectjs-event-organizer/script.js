@@ -43,25 +43,6 @@ let Client = class {
 
 //Main
 var EventsOrganizer = {
-    //Helpful methods
-    findEvent: function (eventId) {
-        //Guards
-        if (arguments.length !== 1 || typeof (eventId) !== 'number' || eventId < 1) {
-            return console.log("Please provide only eventId (integer greater than 0) !");
-        }
-
-        var eventFoundI;
-        for (var i = 0; i < eventsCollection.length; i++) {
-            if (eventsCollection[i].id === eventId) {
-                eventFoundI = i;
-                break;
-            }
-        }
-        return eventFoundI;
-    },
-
-    //Functionality
-
     storeListOfEvents: function (events) {
         //Guards
         if (systemOffForAddOperations) {
@@ -91,9 +72,9 @@ var EventsOrganizer = {
         console.log("Events:");
         for (var i = 0; i < eventsCollection.length; i++) {
             if (eventsCollection[i].isForKids === true) {
-                console.log(`\t${eventsCollection[i].id}. ${eventsCollection[i].name} : All ages`);
+                console.log(`\tId:${eventsCollection[i].id} - #${eventsCollection[i].name} : All ages`);
             } else {
-                console.log(`\t${eventsCollection[i].id}. ${eventsCollection[i].name} : 18+`);
+                console.log(`\tId:${eventsCollection[i].id} - *${eventsCollection[i].name} : 18+`);
             }
         }
     },
@@ -108,7 +89,7 @@ var EventsOrganizer = {
         }
 
         //Checks if there is an event with that id
-        var eventFoundI = EventsOrganizer.findEvent(eventId);
+        var eventFoundI = eventsCollection.findIndex(e => e.id === eventId);
         if (eventFoundI < 0) {
             return console.log("Event with this id not found! Delete operation canceled!");
         } else {
@@ -149,7 +130,7 @@ var EventsOrganizer = {
         }
 
         //Checks if there is an event with that id
-        var eventFoundI = EventsOrganizer.findEvent(eventId);
+        var eventFoundI = eventsCollection.findIndex(e => e.id === eventId);
         if (eventFoundI < 0) {
             return console.log("Event with this id not found! Update operation canceled!");
         } else {
@@ -178,7 +159,7 @@ var EventsOrganizer = {
         }
 
         //Checks if there is an event with that id
-        var eventFoundI = EventsOrganizer.findEvent(eventId);
+        var eventFoundI = eventsCollection.findIndex(e => e.id === eventId);
         if (eventFoundI < 0) {
             return console.log("Event with this id not found! Add client to event - operation failed!");
         } else {
@@ -205,31 +186,27 @@ var EventsOrganizer = {
         }
 
         //Checks if there is an event with that id
-        var eventFoundI = EventsOrganizer.findEvent(eventId);
+        var eventFoundI = eventsCollection.findIndex(e => e.id === eventId);
         if (eventFoundI < 0) {
             return console.log("Event with this id not found! Show clients of event - operation failed!");
         } else if (eventsCollection[eventFoundI].clients.length < 1) {
             return console.log(`There are no clients in the event - '${eventsCollection[eventFoundI].name}'`);
         } else {
-            //Show functionality based on the gender arg if exists
+            //Show functionality based on the gender argument(if exists)
             if (genderFilter !== "") {
                 if (genderFilter === "male") {
                     console.log(`Males in the event - '${eventsCollection[eventFoundI].name}':`);
                 } else {
                     console.log(`Females in the event - '${eventsCollection[eventFoundI].name}':`);
                 }
-                for (let i = 0; i < eventsCollection[eventFoundI].clients.length; i++) {
-                    const client = eventsCollection[eventFoundI].clients[i];
-                    if (client.gender === genderFilter) {
-                        console.log(`\t${client.firstName} ${client.lastName}, ${client.age}`);
-                    }
-                }
+                eventsCollection[eventFoundI].clients.filter(c => c.gender === genderFilter).forEach(client => {
+                    console.log(`\t${client.firstName} ${client.lastName}, ${client.age}`);
+                });
             } else {
                 console.log(`Clients in the event - '${eventsCollection[eventFoundI].name}':`)
-                for (let i = 0; i < eventsCollection[eventFoundI].clients.length; i++) {
-                    const client = eventsCollection[eventFoundI].clients[i];
+                eventsCollection[eventFoundI].clients.forEach(client => {
                     console.log(`\t${client.firstName} ${client.lastName}, ${client.age}`);
-                }
+                });
             }
         }
     },
@@ -247,24 +224,16 @@ var EventsOrganizer = {
         }
 
         //Checks if there is an event with that id
-        var eventFoundI = EventsOrganizer.findEvent(eventId);
+        var eventFoundI = eventsCollection.findIndex(e => e.id === eventId);
         if (eventFoundI < 0) {
             return console.log("Event with this id not found! Delete client from event - operation failed!");
         } else {
             //Checks if client exist in this event
-            var clientFoundI;
-            for (var i = 0; i < eventsCollection[eventFoundI].clients.length; i++) {
-                const clientInEvent = eventsCollection[eventFoundI].clients[i];
-                if (clientInEvent.firstName === client.firstName && clientInEvent.lastName === client.lastName && clientInEvent.age === client.age) {
-                    clientFoundI = i;
-                    break;
-                }
-            }
-
-            //Delete functionality
+            var clientFoundI = eventsCollection[eventFoundI].clients.findIndex(c => c.firstName === client.firstName && c.lastName === client.lastName && c.age === client.age);
             if (clientFoundI < 0) {
                 return console.log(`Client: '${client.firstName} ${client.lastName}, ${client.age}' is not found! Delete client from event - operation failed!`);
             } else {
+                //Delete functionality
                 console.log(`Client -> '${client.firstName} ${client.lastName}, ${client.age}' <- was deleted successfuly!`);
                 eventsCollection[eventFoundI].clients.splice(clientFoundI, 1);
             }
@@ -274,7 +243,7 @@ var EventsOrganizer = {
     stopSystemForAddOperations: function () {
         //Guards
         if (arguments.length != 0) {
-            return console.log("This method doesn't have arguments!");
+            return console.log("Invalid method 'EventsOrganizer.stopSystemForAddOperations()' !\nThis method doesn't have arguments!");
         }
 
         //Active the flag
@@ -284,23 +253,57 @@ var EventsOrganizer = {
     showEventWithMaxClients: function () {
         //Guards
         if (arguments.length != 0) {
-            return console.log("This method doesn't have arguments!");
+            return console.log("Invalid method 'EventsOrganizer.showEventWithMaxClients()' !\nThis method doesn't have arguments!");
         }
         if (eventsCollection.length < 1) {
             return console.log("No events avaliable. Show event with max clients - operation failed!");
         }
 
-        var clientsInEvent = 0;
-        var eventWithMaxClients;
+        //Finding the event with max clients
+        var maxClientsInEvent = 0;
         for (let i = 0; i < eventsCollection.length; i++) {
             const event = eventsCollection[i];
-            if (event.clients.length > clientsInEvent) {
-                clientsInEvent = event.clients.length;
-                eventWithMaxClients = event;
+            if (event.clients.length > maxClientsInEvent) {
+                maxClientsInEvent = event.clients.length;
             }
         }
+        //Checks if it's only one event with max clients
+        var eventsWithMaxClients = eventsCollection.filter(e => e.clients.length === maxClientsInEvent);
+        if (eventsWithMaxClients.length > 1) {
+            console.log("Error! There are more than one event with max clients!");
+        } else {
+            console.log(`Event '${eventsWithMaxClients[0].name}' has the most clients -> ${maxClientsInEvent}`);
+        }
+    },
 
-        console.log(`Event '${eventWithMaxClients.name}' has the most clients -> ${clientsInEvent}`);
+    showEventsForKids: function () {
+        //Guards
+        if (arguments.length != 0) {
+            return console.log("Invalid method 'EventsOrganizer.showEventsForKids()' !\nThis method doesn't have arguments!");
+        }
+
+        //Filter and display events
+        console.log("Events for kids:")
+        eventsCollection.filter(e => e.isForKids).forEach(event => {
+            console.log(`\tId:${event.id} - ${event.name}`);
+        });
+    },
+
+    filterEvents: function (filterName, callback) {
+        //Guards
+        if (eventsCollection.length < 1) {
+            return console.log("No events avaliable. Delete client from event - operation failed!");
+        }
+        if (arguments.length != 2) {
+            return console.log("Please specify these arguments: filterName and callback !");
+        }
+        if (typeof (filterName) !== 'string' || typeof (callback) !== 'function') {
+            return console.log("Unvalid arguments found:\n\t- eventId must be interger greater than 0 !\n\t- client must be an instance of Client!\nDelete client from event - operation failed!");
+        }
+
+        var callbackResult = callback(eventsCollection);
+        console.log(`Result from filter: '${filterName}'`);
+        console.log(callbackResult);
     }
 }
 
@@ -325,4 +328,9 @@ ta11();
 console.log("===================================================================");
 ta13();
 console.log("===================================================================");
+ta14();
+console.log("===================================================================");
+ta16();
+console.log("===================================================================");
+console.log("Original Collection of Events:")
 console.log(eventsCollection);
