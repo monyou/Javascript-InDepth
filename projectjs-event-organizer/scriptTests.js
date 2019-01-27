@@ -1,4 +1,5 @@
-//Testing Exercise 1
+// Main exercises:
+//Exercise 1
 function t1() {
     var eventsList = [
         new Event("House party in Romania!", false),
@@ -8,27 +9,29 @@ function t1() {
     EventsOrganizer.storeListOfEvents(eventsList);
 }
 
-//Testing Excercise 2
+//Excercise 2
 function t2() {
     EventsOrganizer.showEvents();
 }
 
-//Testing Excercise 3
+//Excercise 3
 function t3() {
     EventsOrganizer.deleteEvent(2);
 }
 
-//Testing Excercise 4
+//Excercise 4
 function t4() {
-    EventsOrganizer.addEvent("Go to cinema.");
+    var event = new Event("Go to cinema");
+    EventsOrganizer.addEvent(event);
 }
 
-//Testing Excercise 5
+//Excercise 5
 function t5() {
-    EventsOrganizer.updateEvent(3, "My New Occasion - Adult Shopping!", false);
+    var newEvent = new Event("My New Event - Adult Shopping!", false);
+    EventsOrganizer.updateEvent(3, newEvent);
 }
 
-//Testing Excercise 6
+//Excercise 6
 function t6() {
     var client = new Client("Simeon", "Mechkov", 22, "male");
     var client2 = new Client("Krasimira", "Piskacheva", 21, "female");
@@ -38,14 +41,21 @@ function t6() {
     EventsOrganizer.addClientToEvent(client3, 1);
 }
 
-//Testing Excercise 7
+//Excercise 7
 function t7() {
     EventsOrganizer.showClientsOfEvent(1);
     EventsOrganizer.showClientsOfEvent(1, "female");
 }
 
-//Testing Excercise 8
+//Excercise 8
 function t8() {
     clientToDelete = new Client("Georgi", "Vaklinov", 23, "male");
     EventsOrganizer.deleteClientFromEvent(clientToDelete, 1);
+}
+
+//Additional exercises part 1:
+//Exercise 1
+function ta11() {
+    EventsOrganizer.stopSystemForAddOperations();
+    t4();
 }

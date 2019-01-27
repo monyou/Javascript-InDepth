@@ -1,5 +1,13 @@
+//Variables
+let eventsCollection = [];
+let systemOffForAddOperations = false;
+
+//Structure
 let Event = class {
-    constructor(name, isForKids) {
+    constructor(name, isForKids = true) {
+        if (arguments.length < 1 || arguments.length > 2) {
+            return console.log("Please specify these arguments: name and isForKids(optional) !");
+        }
         if (typeof (name) !== 'string' || typeof (isForKids) !== 'boolean') {
             return console.log("Unvalid event!");
         }
@@ -31,11 +39,12 @@ let Client = class {
     }
 }
 
-//Main Collection of all Events
-let eventsCollection = [];
-
+//Main
 var EventsOrganizer = {
     storeListOfEvents: function (events) {
+        if (systemOffForAddOperations) {
+            return console.log("System is OFF for that type operation! Check back soon...")
+        }
         if (arguments.length !== 1 || !Array.isArray(events)) {
             return console.log("Please provide a collection with events!");
         }
@@ -90,28 +99,30 @@ var EventsOrganizer = {
 
     },
 
-    addEvent: function (name, isForKids = true) {
-        if (arguments.length < 1 || arguments.length > 2) {
-            return console.log("Please specify these arguments: name and isForKids(optional) !");
+    addEvent: function (event) {
+        if (systemOffForAddOperations) {
+            return console.log("System is OFF for that type operation! Check back soon...")
         }
-        if (typeof (name) !== 'string' || typeof (isForKids) !== 'boolean') {
-            return console.log("Unvalid arguments found:\n\t- name must be a string!\n\t- isForKids must be a boolean!\nAdd operation failed!");
+        if (arguments.length !== 1) {
+            return console.log("Please specify these arguments: event !");
         }
-        var event = new Event(name, isForKids);
+        if (!(newEvent instanceof Event)) {
+            return console.log("Unvalid arguments found:\n\t- event must be an instance of Event class\nAdd operation failed!");
+        }
         eventsCollection.push(event);
 
         console.log(`Event -> 'id:${Event.latestId}, name:${name}' <- was added successfuly!`);
     },
 
-    updateEvent: function (eventId, newName, newIsForKids = true) {
+    updateEvent: function (eventId, newEvent) {
         if (eventsCollection.length < 1) {
             return console.log("No events avaliable. Update operation failed!");
         }
-        if (arguments.length < 1 || arguments.length > 3) {
-            return console.log("Please specify these arguments: eventId, name and isForKids(optional) !");
+        if (arguments.length !== 2) {
+            return console.log("Please specify these arguments: eventId and newEvent !");
         }
-        if (typeof (eventId) !== 'number' || eventId < 1 || typeof (newName) !== 'string' || typeof (newIsForKids) !== 'boolean') {
-            return console.log("Unvalid arguments found:\n\t- eventId must be interger greater than 0 !\n\t- name must be a string!\n\t- isForKids must be a boolean!\nUpdate operation failed!");
+        if (typeof (eventId) !== 'number' || eventId < 1 || !(newEvent instanceof Event)) {
+            return console.log("Unvalid arguments found:\n\t- eventId must be interger greater than 0\n\t- newEvent must be an instance of Event class\nUpdate operation failed!");
         }
 
         var eventFoundI;
@@ -125,18 +136,18 @@ var EventsOrganizer = {
         if (eventFoundI < 0) {
             return console.log("Event with this id not found! Update operation canceled!");
         } else {
-            var savedLastId = Event.latestId;
-            Event.latestId = eventId - 1;
             eventsCollection.splice(eventFoundI, 1);
-            var newEvent = new Event(newName, newIsForKids);
+            newEvent.id = eventId;
             eventsCollection.splice(eventFoundI, 0, newEvent);
-            Event.latestId = savedLastId;
 
             console.log(`Event -> 'id:${eventId}' <- was updated successfuly!`);
         }
     },
 
     addClientToEvent: function (client, eventId) {
+        if (systemOffForAddOperations) {
+            return console.log("System is OFF for that type operation! Check back soon...")
+        }
         if (eventsCollection.length < 1) {
             return console.log("No events avaliable. Add client to event - operation failed!");
         }
@@ -251,8 +262,14 @@ var EventsOrganizer = {
                 eventsCollection[eventFoundI].clients.splice(clientFoundI, 1);
             }
         }
-    }
+    },
 
+    stopSystemForAddOperations: function () {
+        if (arguments.length != 0) {
+            return console.log("This method doesn't have arguments!");
+        }
+        systemOffForAddOperations = true;
+    }
 }
 
 // Testing
@@ -271,5 +288,8 @@ console.log("===================================================================
 t7();
 console.log("===================================================================");
 t8();
+console.log("===================================================================");
+ta11();
+systemOffForAddOperations = false;
 console.log("===================================================================");
 console.log(eventsCollection);
