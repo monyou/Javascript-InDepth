@@ -2,7 +2,7 @@
 //Exercise 1
 function t1() {
     var eventsList = [
-        new Event("House party in Romania!", false),
+        new Event("House party in Romania!", false, "03.09.2019"),
         new Event("Beer party!", false),
         new Event("Birthday with friends.", true)
     ];
@@ -58,4 +58,10 @@ function t8() {
 function ta11() {
     EventsOrganizer.stopSystemForAddOperations();
     t4();
+    systemOffForAddOperations = false;
+}
+
+//Exercise 3
+function ta13() {
+    EventsOrganizer.showEventWithMaxClients();
 }
