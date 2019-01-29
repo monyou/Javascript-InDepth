@@ -4,11 +4,11 @@ let systemOffForAddOperations = false;
 
 //Structures
 let Event = class {
-    constructor(name, isForKids = true, date = "") {
-        if (arguments.length < 1 || arguments.length > 3) {
-            return console.log("Please specify these arguments: name and isForKids(optional) !");
+    constructor(name, isForKids = true, date = "", fee = 0) {
+        if (arguments.length < 1 || arguments.length > 4) {
+            return console.log("Please specify these arguments: name, isForKids(optional), date(optional) and fee(optional) !");
         }
-        if (typeof (name) !== 'string' || typeof (isForKids) !== 'boolean' || typeof (date) !== 'string') {
+        if (typeof (name) !== 'string' || typeof (isForKids) !== 'boolean' || typeof (date) !== 'string' || typeof (fee) !== 'number') {
             return console.log("Unvalid event!");
         }
 
@@ -16,6 +16,7 @@ let Event = class {
         this.name = name;
         this.isForKids = isForKids;
         this.date = date;
+        this.fee = fee;
         this.clients = [];
     }
 
@@ -27,17 +28,19 @@ let Event = class {
 }
 
 let Client = class {
-    constructor(firstName, lastName, age, gender) {
-        if (arguments.length !== 4) {
-            return console.log("Please specify these arguments: firstName, lastName, age and gender");
+    constructor(firstName, lastName, age, gender, vWallet = 0) {
+        if (arguments.length < 4 || arguments.length > 5) {
+            return console.log("Please specify these arguments: firstName, lastName, age, gender and vWallet(optional)");
         }
-        if (typeof (firstName, lastName, gender) !== 'string' || typeof (age) !== 'number') {
+        if (typeof (firstName, lastName, gender) !== 'string' || typeof (age, vWallet) !== 'number') {
             return console.log("Unvalid client!");
         }
         this.firstName = firstName;
         this.lastName = lastName;
         this.gender = gender;
         this.age = age;
+        this.vWallet = vWallet;
+        this.isVIP = false;
     }
 }
 
@@ -71,10 +74,18 @@ var EventsOrganizer = {
         //Display functionality
         console.log("Events:");
         for (var i = 0; i < eventsCollection.length; i++) {
-            if (eventsCollection[i].isForKids === true) {
-                console.log(`\tId:${eventsCollection[i].id} - #${eventsCollection[i].name} : All ages`);
+            if (eventsCollection[i].fee > 0) {
+                if (eventsCollection[i].isForKids === true) {
+                    console.log(`\t$ Id:${eventsCollection[i].id} - #${eventsCollection[i].name} : All ages`);
+                } else {
+                    console.log(`\t$ Id:${eventsCollection[i].id} - *${eventsCollection[i].name} : 18+`);
+                }
             } else {
-                console.log(`\tId:${eventsCollection[i].id} - *${eventsCollection[i].name} : 18+`);
+                if (eventsCollection[i].isForKids === true) {
+                    console.log(`\t! Id:${eventsCollection[i].id} - #${eventsCollection[i].name} : All ages`);
+                } else {
+                    console.log(`\t! Id:${eventsCollection[i].id} - *${eventsCollection[i].name} : 18+`);
+                }
             }
         }
     },
@@ -114,7 +125,7 @@ var EventsOrganizer = {
 
         //Add functionality
         eventsCollection.push(event);
-        console.log(`Event -> 'id:${Event.latestId}, name:${name}' <- was added successfuly!`);
+        console.log(`Event -> 'id:${Event.latestId}, name:${event.name}' <- was added successfuly!`);
     },
 
     updateEvent: function (eventId, newEvent) {
@@ -163,12 +174,31 @@ var EventsOrganizer = {
         if (eventFoundI < 0) {
             return console.log("Event with this id not found! Add client to event - operation failed!");
         } else {
-            //Add client ot event logic
+            //Validating the client
+            if (eventsCollection[eventFoundI].clients.findIndex(c => c.firstName === client.firstName && c.lastName === client.lastName && c.age === client.age) !== -1) {
+                return console.log("This client is already registered for that event! Add client to this event - canceled!");
+            }
             if (eventsCollection[eventFoundI].isForKids === false && client.age < 18) {
                 return console.log("This client is young for that event! Add client to this event - canceled!");
+            }
+            //stores in how many event is the client registered
+            var numberOfEventsWithThisClient = eventsCollection.filter(e => e.clients.findIndex(c => c.firstName === client.firstName && c.lastName === client.lastName && c.age === client.age) !== -1).length;
+            if (numberOfEventsWithThisClient === 5) {
+                client.isVIP = true;
             } else {
+                client.isVIP = false;
+            }
+            if (client.isVIP) {
                 eventsCollection[eventFoundI].clients.push(client);
-                console.log(`Client successfuly added to the event -> '${eventsCollection[eventFoundI].name}'`);
+                console.log(`Client successfuly added to the event -> '${eventsCollection[eventFoundI].name}'\n\tClient was not charged because he is VIP! `);
+            } else {
+                if (eventsCollection[eventFoundI].fee > client.vWallet) {
+                    return console.log(`Client doesn't have money in his virtual wallet for this event!\n\tEvent fee: ${eventsCollection[eventFoundI].fee}$\n\tMoney in the client virtual wallet: ${client.vWallet}$`);
+                }
+                //Add client to event and withdraw money from his vWallet
+                client.vWallet -= eventsCollection[eventFoundI].fee;
+                eventsCollection[eventFoundI].clients.push(client);
+                console.log(`Client successfuly added to the event -> '${eventsCollection[eventFoundI].name}'\n\tClient was charged from the virtual wallet with amount: ${eventsCollection[eventFoundI].fee}$\n\tRemaining amout in the virtual wallet: ${client.vWallet}$`);
             }
         }
     },
@@ -304,6 +334,7 @@ var EventsOrganizer = {
         var callbackResult = callback(eventsCollection);
         console.log(`Result from filter: '${filterName}'`);
         console.log(callbackResult);
+        return callbackResult;
     }
 }
 

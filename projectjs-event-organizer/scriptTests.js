@@ -2,8 +2,8 @@
 //Exercise 1
 function t1() {
     var eventsList = [
-        new Event("House party in Romania!", false, "03.09.2019"),
-        new Event("Beer party!", false),
+        new Event("House party in Romania!", false, "03.09.2019", 50),
+        new Event("Beer party!", false, "", 20),
         new Event("Birthday with friends.", true)
     ];
     EventsOrganizer.storeListOfEvents(eventsList);
@@ -33,12 +33,14 @@ function t5() {
 
 //Excercise 6
 function t6() {
-    var client = new Client("Simeon", "Mechkov", 22, "male");
-    var client2 = new Client("Krasimira", "Piskacheva", 21, "female");
-    var client3 = new Client("Georgi", "Vaklinov", 23, "male");
+    var client = new Client("Simeon", "Mechkov", 22, "male", 1000);
+    var client2 = new Client("Krasimira", "Piskacheva", 21, "female", 200);
+    var client3 = new Client("Georgi", "Vaklinov", 23, "male", 500);
+    var client4 = new Client("Tinko", "Boqdzhiev", 20, "male", 20);
     EventsOrganizer.addClientToEvent(client, 1);
     EventsOrganizer.addClientToEvent(client2, 1);
     EventsOrganizer.addClientToEvent(client3, 1);
+    EventsOrganizer.addClientToEvent(client4, 1);
 }
 
 //Excercise 7
