@@ -21,8 +21,18 @@ function t3() {
 
 //Excercise 4
 function t4() {
-    var event = new Event("Go to cinema");
+    var event = new Event("Go to cinema", true, "11.27.2019", 20);
+    var event1 = new Event("Honda Fans Meeting", false, "05.05.2019", 100);
+    var event2 = new Event("Nature Workout", true, "06.06.2019", 30);
+    var event3 = new Event("Paris - St.Valentine", false, "02.14.2019", 1000);
+    var event4 = new Event("Dubai - Beach Party", false, "07.01.2019", 3000);
+    var event5 = new Event("Borring Event");
     EventsOrganizer.addEvent(event);
+    EventsOrganizer.addEvent(event1);
+    EventsOrganizer.addEvent(event2);
+    EventsOrganizer.addEvent(event3);
+    EventsOrganizer.addEvent(event4);
+    EventsOrganizer.addEvent(event5);
 }
 
 //Excercise 5
@@ -85,4 +95,41 @@ function ta16() {
         }
         return eventsWithDate;
     });
+}
+
+//Additional exercises part 2:
+//Exercise 5
+function ta25() {
+    var client = new Client("Mihail", "Petrov", 25, "male", 9999);
+    EventsOrganizer.addClientToEvent(client, 1);
+    EventsOrganizer.addClientToEvent(client, 3);
+    EventsOrganizer.addClientToEvent(client, 4);
+    EventsOrganizer.addClientToEvent(client, 5);
+    EventsOrganizer.addClientToEvent(client, 6);
+    console.log("!--- This is going to be his 6th event --- !");
+    EventsOrganizer.addClientToEvent(client, 7);
+    console.log("!--- This is going to be his 7th event --- !");
+    EventsOrganizer.addClientToEvent(client, 8);
+}
+
+//Additional exercises part 3:
+//Exercise 1
+function ta31() {
+    EventsOrganizer.archiveEvent(4);
+    EventsOrganizer.archiveEvent(7);
+    var client = new Client("Mihail", "Petrov", 25, "male", 9999);
+    EventsOrganizer.addClientToEvent(client, 7);
+}
+//Exercise 3
+function ta33() {
+    EventsOrganizer.showArchivedEvents();
+    EventsOrganizer.showEventsWithClients();
+}
+//Exercise 4
+function ta34() {
+    EventsOrganizer.showEarningsFromArchivedEvent(4);
+}
+//Exercise 5
+function ta35() {
+    EventsOrganizer.showEvents();
 }

@@ -17,6 +17,8 @@ let Event = class {
         this.isForKids = isForKids;
         this.date = date;
         this.fee = fee;
+        this.isArchive = false;
+        this.rating = 0;
         this.clients = [];
     }
 
@@ -74,19 +76,38 @@ var EventsOrganizer = {
         //Display functionality
         console.log("Events:");
         for (var i = 0; i < eventsCollection.length; i++) {
-            if (eventsCollection[i].fee > 0) {
-                if (eventsCollection[i].isForKids === true) {
-                    console.log(`\t$ Id:${eventsCollection[i].id} - #${eventsCollection[i].name} : All ages`);
-                } else {
-                    console.log(`\t$ Id:${eventsCollection[i].id} - *${eventsCollection[i].name} : 18+`);
-                }
-            } else {
-                if (eventsCollection[i].isForKids === true) {
-                    console.log(`\t! Id:${eventsCollection[i].id} - #${eventsCollection[i].name} : All ages`);
-                } else {
-                    console.log(`\t! Id:${eventsCollection[i].id} - *${eventsCollection[i].name} : 18+`);
-                }
-            }
+            console.log(`\t${eventsCollection[i].fee > 0 ? '$': '!'} Id:${eventsCollection[i].id} - ${eventsCollection[i].isArchive ? "~" : ""}${eventsCollection[i].isForKids ? "#" : "*"}${eventsCollection[i].name} : ${eventsCollection[i].isForKids ? "All ages" : "18+"}${(eventsCollection[i].rating > 0 && eventsCollection[i].isArchive ) ? ", Rating: "+eventsCollection[i].rating+"," : (eventsCollection[i].rating === 0 && eventsCollection[i].isArchive ) ? ", Rating: Awaiting," : ""} ${eventsCollection[i].isArchive ? "(Archive)":""}`);
+
+            //Too many nested ifs
+            // if (eventsCollection[i].fee > 0) {
+            //     if (eventsCollection[i].isForKids === true) {
+            //         if (eventsCollection[i].isArchive === true) {
+            //             console.log(`\t$ Id:${eventsCollection[i].id} - ~${eventsCollection[i].name} : All ages (Archive)`);
+            //         } else {
+            //             console.log(`\t$ Id:${eventsCollection[i].id} - #${eventsCollection[i].name} : All ages`);
+            //         }
+            //     } else {
+            //         if (eventsCollection[i].isArchive === true) {
+            //             console.log(`\t$ Id:${eventsCollection[i].id} - ~${eventsCollection[i].name} : 18+ (Archive)`);
+            //         } else {
+            //             console.log(`\t$ Id:${eventsCollection[i].id} - *${eventsCollection[i].name} : 18+`);
+            //         }
+            //     }
+            // } else {
+            //     if (eventsCollection[i].isForKids === true) {
+            //         if (eventsCollection[i].isArchive === true) {
+            //             console.log(`\t! Id:${eventsCollection[i].id} - ~${eventsCollection[i].name} : All ages (Archive)`);
+            //         } else {
+            //             console.log(`\t! Id:${eventsCollection[i].id} - #${eventsCollection[i].name} : All ages`);
+            //         }
+            //     } else {
+            //         if (eventsCollection[i].isArchive === true) {
+            //             console.log(`\t! Id:${eventsCollection[i].id} - ~${eventsCollection[i].name} : 18+ (Archive)`);
+            //         } else {
+            //             console.log(`\t! Id:${eventsCollection[i].id} - *${eventsCollection[i].name} : 18+`);
+            //         }
+            //     }
+            // }
         }
     },
 
@@ -174,6 +195,10 @@ var EventsOrganizer = {
         if (eventFoundI < 0) {
             return console.log("Event with this id not found! Add client to event - operation failed!");
         } else {
+            //Checks if event is archived
+            if (eventsCollection[eventFoundI].isArchive === true) {
+                return console.log(`This event -> '${eventsCollection[eventFoundI].name}' is archived! You have only read rights!\n\tAdd client to event - opration canceled!`);
+            }
             //Validating the client
             if (eventsCollection[eventFoundI].clients.findIndex(c => c.firstName === client.firstName && c.lastName === client.lastName && c.age === client.age) !== -1) {
                 return console.log("This client is already registered for that event! Add client to this event - canceled!");
@@ -190,15 +215,15 @@ var EventsOrganizer = {
             }
             if (client.isVIP) {
                 eventsCollection[eventFoundI].clients.push(client);
-                console.log(`Client successfuly added to the event -> '${eventsCollection[eventFoundI].name}'\n\tClient was not charged because he is VIP! `);
+                console.log(`Client -> '${client.firstName} ${client.lastName}, ${client.age}' successfuly added to the event -> '${eventsCollection[eventFoundI].name}'\n\tClient was not charged because he is a VIP! `);
             } else {
                 if (eventsCollection[eventFoundI].fee > client.vWallet) {
-                    return console.log(`Client doesn't have money in his virtual wallet for this event!\n\tEvent fee: ${eventsCollection[eventFoundI].fee}$\n\tMoney in the client virtual wallet: ${client.vWallet}$`);
+                    return console.log(`Client -> '${client.firstName} ${client.lastName}, ${client.age}' doesn't have money in his virtual wallet for this event!\n\tEvent fee: ${eventsCollection[eventFoundI].fee}$\n\tMoney in the client virtual wallet: ${client.vWallet}$`);
                 }
                 //Add client to event and withdraw money from his vWallet
                 client.vWallet -= eventsCollection[eventFoundI].fee;
                 eventsCollection[eventFoundI].clients.push(client);
-                console.log(`Client successfuly added to the event -> '${eventsCollection[eventFoundI].name}'\n\tClient was charged from the virtual wallet with amount: ${eventsCollection[eventFoundI].fee}$\n\tRemaining amout in the virtual wallet: ${client.vWallet}$`);
+                console.log(`Client -> '${client.firstName} ${client.lastName}, ${client.age}' successfuly added to the event -> '${eventsCollection[eventFoundI].name}'\n\tClient was charged from the virtual wallet with amount: ${eventsCollection[eventFoundI].fee}$\n\tRemaining amout in the virtual wallet: ${client.vWallet}$`);
             }
         }
     },
@@ -258,6 +283,10 @@ var EventsOrganizer = {
         if (eventFoundI < 0) {
             return console.log("Event with this id not found! Delete client from event - operation failed!");
         } else {
+            //Checks if event is archived
+            if (eventsCollection[eventFoundI].isArchive === true) {
+                return console.log(`This event -> '${eventsCollection[eventFoundI].name}' is archived! You have only read rights!\n\tDelete client from event - opration canceled!`);
+            }
             //Checks if client exist in this event
             var clientFoundI = eventsCollection[eventFoundI].clients.findIndex(c => c.firstName === client.firstName && c.lastName === client.lastName && c.age === client.age);
             if (clientFoundI < 0) {
@@ -315,7 +344,7 @@ var EventsOrganizer = {
         //Filter and display events
         console.log("Events for kids:")
         eventsCollection.filter(e => e.isForKids).forEach(event => {
-            console.log(`\tId:${event.id} - ${event.name}`);
+            console.log(`\tId:${event.id} -> ${event.name}`);
         });
     },
 
@@ -335,6 +364,79 @@ var EventsOrganizer = {
         console.log(`Result from filter: '${filterName}'`);
         console.log(callbackResult);
         return callbackResult;
+    },
+
+    archiveEvent: function (eventId) {
+        //Guards
+        if (eventsCollection.length < 1) {
+            return console.log("No events avaliable. Archive event - operation failed!");
+        }
+        if (arguments.length !== 1) {
+            return console.log("Please specify these arguments: eventId !");
+        }
+        if (typeof (eventId) !== 'number' || eventId < 1) {
+            return console.log("Unvalid arguments found:\n\t- eventId must be an integer greater than 0\nArchive event - operation failed!");
+        }
+
+        //Checks if there is an event with that id
+        var eventFoundI = eventsCollection.findIndex(e => e.id === eventId);
+        if (eventFoundI < 0) {
+            return console.log("Event with this id not found! Archive event - operation failed!");
+        } else {
+            eventsCollection[eventFoundI].isArchive = true;
+            console.log(`This event -> '${eventsCollection[eventFoundI].name}' was archived successfuly!`);
+        }
+    },
+
+    showArchivedEvents: function () {
+        //Guards
+        if (arguments.length != 0) {
+            return console.log("Invalid method 'EventsOrganizer.showArchivedEvents()' !\nThis method doesn't have arguments!");
+        }
+
+        //Filter and display events
+        console.log("Archived events:")
+        eventsCollection.filter(e => e.isArchive).forEach(event => {
+            console.log(`\tId:${event.id} -> ${event.name}`);
+        });
+    },
+
+    showEventsWithClients: function () {
+        //Guards
+        if (arguments.length != 0) {
+            return console.log("Invalid method 'EventsOrganizer.showEventsWithClients()' !\nThis method doesn't have arguments!");
+        }
+
+        //Filter and display events
+        console.log("Events with clients:")
+        eventsCollection.filter(e => e.clients.length > 0).forEach(event => {
+            console.log(`\tId:${event.id} -> ${event.name}`);
+        });
+    },
+
+    showEarningsFromArchivedEvent(eventId) {
+        //Guards
+        if (eventsCollection.length < 1) {
+            return console.log("No events avaliable. Show Earnings From Archived Event - operation failed!");
+        }
+        if (arguments.length !== 1) {
+            return console.log("Please specify these arguments: eventId !");
+        }
+        if (typeof (eventId) !== 'number' || eventId < 1) {
+            return console.log("Unvalid arguments found:\n\t- eventId must be an integer greater than 0\nShow Earnings From Archived Event - operation failed!");
+        }
+
+        //Checks if there is an event with that id
+        var eventFoundI = eventsCollection.findIndex(e => e.id === eventId);
+        if (eventFoundI < 0) {
+            return console.log("Event with this id not found!\nShow Earnings From Archived Event - operation failed!");
+        } else {
+            if (eventsCollection[eventFoundI].isArchive === false) {
+                return console.log(`Event with this id is not archived yet!\nShow Earnings From Archived Event - operation canceled!`)
+            } else {
+                console.log(`Total Earnings from archive 'Id:${eventId} -> ${eventsCollection[eventFoundI].name}' are: ${eventsCollection[eventFoundI].clients.length*eventsCollection[eventFoundI].fee}$`);
+            }
+        }
     }
 }
 
@@ -362,6 +464,16 @@ console.log("===================================================================
 ta14();
 console.log("===================================================================");
 ta16();
+console.log("===================================================================");
+ta25();
+console.log("===================================================================");
+ta31();
+console.log("===================================================================");
+ta33();
+console.log("===================================================================");
+ta34();
+console.log("===================================================================");
+ta35();
 console.log("===================================================================");
 console.log("Original Collection of Events:")
 console.log(eventsCollection);
