@@ -437,6 +437,36 @@ var EventsOrganizer = {
                 console.log(`Total Earnings from archive 'Id:${eventId} -> ${eventsCollection[eventFoundI].name}' are: ${eventsCollection[eventFoundI].clients.length*eventsCollection[eventFoundI].fee}$`);
             }
         }
+    },
+
+    rateArchivedEvent: function (eventId, rating, client) {
+        //Guards
+        if (eventsCollection.length < 1) {
+            return console.log("No events avaliable. Rate Archived Event - operation failed!");
+        }
+        if (arguments.length !== 3) {
+            return console.log("Please specify these arguments: eventId, rating and client!");
+        }
+        if (typeof (eventId, rating) !== 'number' || eventId < 1 || (rating < 1 && rating > 10) || !(client instanceof Client)) {
+            return console.log("Unvalid arguments found:\n\t- eventId must be an integer greater than 0\n\t- rating must be an interger from 1 to 10\n\t- client must be an instance of Client\nRate Archived Event - operation failed!");
+        }
+
+        //Checks if there is an event with that id
+        var eventFoundI = eventsCollection.findIndex(e => e.id === eventId);
+        if (eventFoundI < 0) {
+            return console.log("Event with this id not found!\nRate Archived Event - operation failed!");
+        } else {
+            if (eventsCollection[eventFoundI].isArchive === false) {
+                return console.log(`Event with this id is not archived yet!\nRate Archived Event - operation canceled!`)
+            }
+            if (eventsCollection[eventFoundI].clients.findIndex(c => c.firstName === client.firstName && c.lastName === client.lastName && c.age === client.age) === -1) {
+                return console.log("This client can't rate the event because he was not been there!")
+            }
+
+            eventsCollection[eventFoundI].rating = ((rating * 0.6) / eventsCollection[eventFoundI].clients.length).toFixed(2);
+
+            console.log(`Event -> '${eventsCollection[eventFoundI].name}' has been successfuly rated!\n\tRating: ${eventsCollection[eventFoundI].rating}`);
+        }
     }
 }
 

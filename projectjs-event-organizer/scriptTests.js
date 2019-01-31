@@ -131,5 +131,7 @@ function ta34() {
 }
 //Exercise 5
 function ta35() {
+    var client = new Client("Mihail", "Petrov", 25, "male", 9999);
+    EventsOrganizer.rateArchivedEvent(4, 9, client);
     EventsOrganizer.showEvents();
 }
