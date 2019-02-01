@@ -77,37 +77,6 @@ var EventsOrganizer = {
         console.log("Events:");
         for (var i = 0; i < eventsCollection.length; i++) {
             console.log(`\t${eventsCollection[i].fee > 0 ? '$': '!'} Id:${eventsCollection[i].id} - ${eventsCollection[i].isArchive ? "~" : ""}${eventsCollection[i].isForKids ? "#" : "*"}${eventsCollection[i].name} : ${eventsCollection[i].isForKids ? "All ages" : "18+"}${(eventsCollection[i].rating > 0 && eventsCollection[i].isArchive ) ? ", Rating: "+eventsCollection[i].rating+"," : (eventsCollection[i].rating === 0 && eventsCollection[i].isArchive ) ? ", Rating: Awaiting," : ""} ${eventsCollection[i].isArchive ? "(Archive)":""}`);
-
-            //Too many nested ifs
-            // if (eventsCollection[i].fee > 0) {
-            //     if (eventsCollection[i].isForKids === true) {
-            //         if (eventsCollection[i].isArchive === true) {
-            //             console.log(`\t$ Id:${eventsCollection[i].id} - ~${eventsCollection[i].name} : All ages (Archive)`);
-            //         } else {
-            //             console.log(`\t$ Id:${eventsCollection[i].id} - #${eventsCollection[i].name} : All ages`);
-            //         }
-            //     } else {
-            //         if (eventsCollection[i].isArchive === true) {
-            //             console.log(`\t$ Id:${eventsCollection[i].id} - ~${eventsCollection[i].name} : 18+ (Archive)`);
-            //         } else {
-            //             console.log(`\t$ Id:${eventsCollection[i].id} - *${eventsCollection[i].name} : 18+`);
-            //         }
-            //     }
-            // } else {
-            //     if (eventsCollection[i].isForKids === true) {
-            //         if (eventsCollection[i].isArchive === true) {
-            //             console.log(`\t! Id:${eventsCollection[i].id} - ~${eventsCollection[i].name} : All ages (Archive)`);
-            //         } else {
-            //             console.log(`\t! Id:${eventsCollection[i].id} - #${eventsCollection[i].name} : All ages`);
-            //         }
-            //     } else {
-            //         if (eventsCollection[i].isArchive === true) {
-            //             console.log(`\t! Id:${eventsCollection[i].id} - ~${eventsCollection[i].name} : 18+ (Archive)`);
-            //         } else {
-            //             console.log(`\t! Id:${eventsCollection[i].id} - *${eventsCollection[i].name} : 18+`);
-            //         }
-            //     }
-            // }
         }
     },
 
