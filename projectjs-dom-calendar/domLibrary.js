@@ -26,7 +26,7 @@ let DOMco = {
 
         var child = document.createElement(childElement);
         this.element.appendChild(child);
-
+        this.element = child;
         return this;
     },
 
@@ -38,6 +38,7 @@ let DOMco = {
         }
 
         this.element.remove();
+        this.element = Element;
         return this;
     },
 
@@ -174,8 +175,31 @@ let DOMco = {
 
         this.element.addEventListener(event, callback);
         return this;
+    },
+
+    // These are my methods
+    // Change text
+    text: function (newText) {
+        //Guards
+        if (arguments.length !== 1 || typeof (newText) !== 'string') {
+            return console.log(`Please specify this argument: newText as string`);
+        }
+
+        this.element.innerHTML = newText;
+        return this;
+    },
+
+    // Select all elements with same selector
+    getElements: function (cssSelector) {
+        //Guards
+        if (arguments.length !== 1 || typeof (cssSelector) !== 'string') {
+            return console.log(`Please specify this argument: selector as string !`);
+        }
+        if (document.querySelectorAll(cssSelector) === null) {
+            return console.log(`There is no such element foud with that cssSelector!`);
+        }
+
+        this.element = document.querySelectorAll(cssSelector)
+        return this;
     }
 }
-
-// For testing uncomment below function
-// Testing();
