@@ -1,5 +1,8 @@
 // DOM Library
 let DOMco = {
+    // Properties
+    element: Element,
+
     //Get Element
     getElement: function (cssSelector) {
         //Guards
@@ -10,63 +13,169 @@ let DOMco = {
             return console.log(`There is no such element foud with that cssSelector!`);
         }
 
-        return document.querySelector(cssSelector);
+        this.element = document.querySelector(cssSelector);
+        return this;
     },
 
     //Add child elements
-    addChildToElement: function (element, childElement) {
+    addChild: function (childElement) {
         //Guards
-        if (arguments.length !== 2 || typeof (childElement) !== 'string' || !(element instanceof Node)) {
-            return console.log(`Please specify these arguments:\n\t- element as instanceof Node\n\t- childElement as string`);
+        if (arguments.length !== 1 || typeof (childElement) !== 'string') {
+            return console.log(`Please specify this argument: childElement as string`);
         }
 
         var child = document.createElement(childElement);
-        element.appendChild(child);
+        this.element.appendChild(child);
 
-        return child;
+        return this;
     },
 
     //Delete element
-    deleteElement: function (element) {
+    delete: function () {
         //Guards
-        if (arguments.length !== 1 || !(element instanceof Node)) {
-            return console.log(`Please specify this argument: element as instanceof Node !`);
+        if (arguments.length !== 0) {
+            return console.log(`No arguments allowed in this method !`);
         }
 
-        element.remove();
+        this.element.remove();
+        return this;
     },
 
-    //Change attr of element
-    changeElementAttribute: function (element, attr, newValue) {
+    //Change attributes of element
+    addId: function (id) {
         //Guards
-        var avaliableAttr = ["id", "class", "data", "name"];
-        if (arguments.length !== 3 || typeof (attr, newValue) !== 'string' || !(element instanceof Node)) {
-            return console.log(`Please specify these arguments:\n\t- element as instanceof Node\n\t- attr as string\n\t- newValue as string`);
-        }
-        if (avaliableAttr.findIndex(a => a === attr.toLowerCase()) === -1) {
-            return console.log(`This attribute you want to change is unvalid!\n\tUse one of these: "id,class,data,name"`);
+        if (arguments.length !== 1 || typeof (id) !== 'string') {
+            return console.log(`Please specify this argument: id as string`);
         }
 
-        element.setAttribute(attr, newValue);
+        this.element.setAttribute("id", id);
+        return this;
+    },
+    addClass: function (className) {
+        //Guards
+        if (arguments.length !== 1 || typeof (className) !== 'string') {
+            return console.log(`Please specify this argument: className as string`);
+        }
+
+        this.element.setAttribute("class", className);
+        return this;
+    },
+    addData: function (data) {
+        //Guards
+        if (arguments.length !== 1 || typeof (data) !== 'string') {
+            return console.log(`Please specify this argument: data as string`);
+        }
+
+        this.element.setAttribute("data", data);
+        return this;
+    },
+    addName: function (name) {
+        //Guards
+        if (arguments.length !== 1 || typeof (name) !== 'string') {
+            return console.log(`Please specify this argument: name as string`);
+        }
+
+        this.element.setAttribute("name", name);
+        return this;
+    },
+
+    // Change the inner text and return the new one
+    changeText: function (newText) {
+        //Guards
+        if (arguments.length !== 1 || typeof (newText) !== 'string') {
+            return console.log(`Please specify this argument: newText as string`);
+        }
+
+        this.element.innerText = newText;
+        return newText;
+    },
+
+    // Change the inner html and return the new one
+    changeHTML: function (newHTML) {
+        //Guards
+        if (arguments.length !== 1 || typeof (newHTML) !== 'string') {
+            return console.log(`Please specify this argument: newHTML as string`);
+        }
+
+        this.element.innerHTML = newHTML;
+        return newHTML;
+    },
+
+    // Change styles of element
+    addStyle: function (styleKey, styleValue) {
+        //Guards
+        if (arguments.length !== 2 || typeof (styleKey, styleValue) !== 'string') {
+            return console.log(`Please specify these arguments:\n\t - styleKey as string\n\t - styleValue as string`);
+        }
+
+        this.element.setAttribute("style", `${styleKey}: ${styleValue};`);
+        return this;
+    },
+    addStyles: function (styles) {
+        //Guards
+        if (arguments.length !== 1 || !(styles instanceof Object)) {
+            return console.log(`Please specify this argument: styles as object`);
+        }
+
+        // Get all keys values of styles and make a proper string
+        var stringStyles = "";
+        for (const [styleKey, styleValue] of Object.entries(styles)) {
+            stringStyles += `${styleKey}: ${styleValue};`;
+        }
+
+        this.element.setAttribute("style", stringStyles);
+        return this;
+    },
+
+    // Traversing methods
+    getParent: function () {
+        //Guards
+        if (arguments.length !== 0) {
+            return console.log(`No arguments allowed in this method !`);
+        }
+
+        this.element = this.element.parentElement;
+        return this;
+    },
+    getPrevSibling: function () {
+        //Guards
+        if (arguments.length !== 0) {
+            return console.log(`No arguments allowed in this method !`);
+        }
+
+        this.element = this.element.previousElementSibling;
+        return this;
+    },
+    getNextSibling: function () {
+        //Guards
+        if (arguments.length !== 0) {
+            return console.log(`No arguments allowed in this method !`);
+        }
+
+        this.element = this.element.nextElementSibling;
+        return this;
+    },
+    getChildren: function () {
+        //Guards
+        if (arguments.length !== 0) {
+            return console.log(`No arguments allowed in this method !`);
+        }
+
+        this.element = this.element.children;
+        return this;
+    },
+
+    // Event listener
+    addEvent: function (event, callback) {
+        //Guards
+        if (arguments.length !== 2 || typeof (event) !== 'string' || !(callback instanceof Function)) {
+            return console.log(`Please specify these arguments:\n\t - event as string\n\t - callback as function`);
+        }
+
+        this.element.addEventListener(event, callback);
+        return this;
     }
 }
 
-//Testing
-//Exercise 1
-var element1 = DOMco.getElement("#ex1");
-console.log(element1);
-//Exercise 2
-var element2 = DOMco.getElement("#ex2");
-var newElement = DOMco.addChildToElement(element2, "p");
-newElement.innerText = "This is child element added with DOMco Lib!";
-console.log(newElement);
-//Exercise 3
-var element3 = DOMco.getElement("#ex3");
-DOMco.deleteElement(element3);
-//Exercise 4 a
-var element4a = DOMco.getElement("#ex4a");
-DOMco.changeElementAttribute(element4a, "id", "cex4a");
-DOMco.changeElementAttribute(element4a, "class", "text-center");
-DOMco.changeElementAttribute(element4a, "data", "Yo! This is the data attr");
-DOMco.changeElementAttribute(element4a, "name", "This is name attr");
-console.log(element4a);
+// For testing uncomment below function
+// Testing();
