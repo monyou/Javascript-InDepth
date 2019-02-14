@@ -28,6 +28,12 @@ let calendarX = {
             return console.log(`Please specify this argument: calendarHolder as string`);
         }
 
+        // If it is initilized in input element becomes datapicker
+        if (DOMco.getElement(calendarHolder).element.localName === 'input') {
+            DOMco.getElement(calendarHolder).addAttr('type', 'date').addId('datepicker');
+            return;
+        }
+
         // Makes div that holds the header and the body (table) of the calendar
         DOMco.getElement(calendarHolder).addChild('div').addId("calendar-wrapper")
             .addChild('div').addId('calendar-header').getParent()
