@@ -58,7 +58,7 @@ let DOMco = {
             return console.log(`Please specify this argument: className as string`);
         }
 
-        this.element.setAttribute("class", `${this.element.getAttribute('class')} ${className}`);
+        this.element.setAttribute("class", `${this.element.getAttribute('class') === null ? "" : this.element.getAttribute('class')} ${className}`);
         return this;
     },
     addData: function (data) {

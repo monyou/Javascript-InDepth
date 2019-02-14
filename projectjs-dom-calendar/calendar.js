@@ -113,10 +113,12 @@ let calendarX = {
                         // Style Today
                         DOMco.addChild('td').text(dayCounter.toString());
                         if (dayCounter === dd) {
-                            DOMco.addStyles({
-                                "background-color": "orange",
-                                "color": "green",
-                                "border-radius": "50%"
+                            DOMco.addClass('today').addStyles({
+                                "background-color": "yellow",
+                                "color": "black",
+                                "box-shadow": "0 0 10px black",
+                                "border-radius": "50%",
+                                "font-weight": "bold"
                             });
                         }
                         DOMco.getParent();
@@ -144,6 +146,9 @@ let calendarX = {
 
         // Restore styles when rewrites
         DOMco.getElements('tr, th, td').element.forEach(element => {
+            // Checks for today field
+            if (element.getAttribute('class') !== null && element.getAttribute('class').includes('today')) return;
+
             DOMco.element = element;
             DOMco.addStyles({
                 "width": "90px",
