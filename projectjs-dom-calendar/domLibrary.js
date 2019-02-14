@@ -58,7 +58,7 @@ let DOMco = {
             return console.log(`Please specify this argument: className as string`);
         }
 
-        this.element.setAttribute("class", className);
+        this.element.setAttribute("class", `${this.element.getAttribute('class')} ${className}`);
         return this;
     },
     addData: function (data) {
@@ -200,6 +200,17 @@ let DOMco = {
         }
 
         this.element = document.querySelectorAll(cssSelector)
+        return this;
+    },
+
+    // Set attributes
+    addAttr: function (attr, value) {
+        //Guards
+        if (arguments.length !== 2 || typeof (attr, value) !== 'string') {
+            return console.log(`Please specify these arguments:\n\t - attr as string\n\t - value as string`);
+        }
+
+        this.element.setAttribute(attr, value);
         return this;
     }
 }

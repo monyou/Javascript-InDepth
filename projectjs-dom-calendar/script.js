@@ -1,4 +1,4 @@
 // For testing DOMco Library uncomment below function
 // Testing();
 
-calendarX.initialize();
+calendarX.initialize('body');
