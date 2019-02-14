@@ -96,18 +96,20 @@ let calendarX = {
             .addChild('th').text('Sunday');
 
         // Makes the body (days)
-        // If its the current month will display the today day in color
         var dayCounter = 1;
+        var daysInMonth = (32 - new Date(this.year, this.month, 32).getDate());
         var startTheSequence = new Date(this.year, this.month, 1).getDay();
+        // Checks if it's the current month selected so to be able to show the todays date differently
         if (this.year === yyyy.toString() && this.month === mm.toString()) {
             for (let i = 0; i < 6; i++) {
                 DOMco.getElement('#calendar').addChild('tr');
                 for (let k = 0; k < 7; k++) {
+                    // Starts from the day that is the first for the month
                     if (i === 0 && k + 1 < startTheSequence) {
                         DOMco.addChild('td').text("").getParent();
                         continue;
                     }
-                    if (dayCounter > 31) {
+                    if (dayCounter > daysInMonth) {
                         DOMco.addChild('td').getParent();
                     } else {
                         // Style Today
@@ -127,14 +129,16 @@ let calendarX = {
                 }
             }
         } else {
+            // Normal building of the body
             for (let i = 0; i < 6; i++) {
                 DOMco.getElement('#calendar').addChild('tr');
                 for (let k = 0; k < 7; k++) {
+                    // Starts from the day that is the first for the month
                     if (i === 0 && k + 1 < startTheSequence) {
                         DOMco.addChild('td').text("").getParent();
                         continue;
                     }
-                    if (dayCounter > 31) {
+                    if (dayCounter > daysInMonth) {
                         DOMco.addChild('td').getParent();
                     } else {
                         DOMco.addChild('td').text(dayCounter.toString()).getParent();
@@ -146,7 +150,7 @@ let calendarX = {
 
         // Restore styles when rewrites
         DOMco.getElements('tr, th, td').element.forEach(element => {
-            // Checks for today field
+            // Checks for today field and skip to save his own formats
             if (element.getAttribute('class') !== null && element.getAttribute('class').includes('today')) return;
 
             DOMco.element = element;
