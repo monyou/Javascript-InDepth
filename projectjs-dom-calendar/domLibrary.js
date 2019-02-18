@@ -109,7 +109,7 @@ let DOMco = {
             return console.log(`Please specify these arguments:\n\t - styleKey as string\n\t - styleValue as string`);
         }
 
-        this.element.setAttribute("style", `${styleKey}: ${styleValue};`);
+        this.element.setAttribute("style", `${this.element.getAttribute('style') === null ? "" : this.element.getAttribute('style')} ${styleKey}: ${styleValue};`);
         return this;
     },
     addStyles: function (styles) {
@@ -124,7 +124,7 @@ let DOMco = {
             stringStyles += `${styleKey}: ${styleValue};`;
         }
 
-        this.element.setAttribute("style", stringStyles);
+        this.element.setAttribute("style", `${this.element.getAttribute('style') === null ? "" : this.element.getAttribute('style')} ${stringStyles}`);
         return this;
     },
 
@@ -206,8 +206,8 @@ let DOMco = {
     // Set attributes
     addAttr: function (attr, value) {
         //Guards
-        if (arguments.length !== 2 || typeof (attr, value) !== 'string') {
-            return console.log(`Please specify these arguments:\n\t - attr as string\n\t - value as string`);
+        if (arguments.length !== 2 || typeof (attr) !== 'string') {
+            return console.log(`Please specify these arguments:\n\t - attr as string\n\t - value as string/number`);
         }
 
         this.element.setAttribute(attr, value);
