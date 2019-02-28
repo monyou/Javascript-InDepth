@@ -1,6 +1,7 @@
 #game_window {
     margin-left: 50px;
     margin-top: 50px;
+    background-color: white;
     width: 1250px;
     height: 750px;
     border: 1px solid black;

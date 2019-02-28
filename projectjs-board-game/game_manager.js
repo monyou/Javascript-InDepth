@@ -95,6 +95,20 @@ let GameManager = {
         this.context.closePath();
     },
 
+    // Events
+    addEvents: function() {
+        this.canvas.addEventListener("click", function(e) {
+            console.log(e);
+            for (let i = 0; i < this.fieldCollection.length; i++) {
+                const element = this.fieldCollection[i];
+                if((e.layerX >= element.x && e.layerX <= element.x+element.width) && (e.layerY >= element.y && e.layerY <= element.y+element.height)) {
+                    element.width += 5;
+                    element.height += 5;
+                }
+            }
+        });
+    },
+
     // Dice simulator
     rollDice: function (maxIncluded) {
         return Math.ceil(Math.random() * Math.floor(maxIncluded));
