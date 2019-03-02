@@ -6,22 +6,67 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- User styles -->
-    <link rel="stylesheet" type="text/css" href="./style.css">
+    <!-- User styles CSS -->
+    <link rel="stylesheet" href="./style.css">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
         crossorigin="anonymous">
 
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-    
+    <!-- Font Awesome pack -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr"
+        crossorigin="anonymous">
+
     <title>FIFA Game</title>
 </head>
 
 <body>
-    
+    <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+            <a class="navbar-brand" onclick="PageBuilder.renderPage(event)">FIFA Game</a>
+            <button class="navbar-toggler" data-target="#nav-top" data-toggle="collapse" aria-controls="nav-top"
+                aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div id="nav-top" class="collapse navbar-collapse">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" onclick="PageBuilder.renderPage(event)">Teams</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" onclick="PageBuilder.renderPage(event)">Matches</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" onclick="PageBuilder.renderPage(event)">Groups</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <div id="content" class="row">
+            <!-- Welcome Text -->
+            <div id="welcome" class="col-md-8 offset-md-2">
+                Welcome to the FIFA Statistics Manager!
+            </div>
+            <!-- Matches view -->
+            <div id="matches" class="d-none col-md-8 offset-md-2">
+                <!-- Filled from javascript PageBuilder method -->
+            </div>
+            <!-- Teams view -->
+            <div id="teams" class="d-none col-md-8 offset-md-2">
+                Teams works!
+            </div>
+            <!-- Groups view -->
+            <div id="groups" class="d-none col-md-8 offset-md-2">
+                Groups works!
+            </div>
+        </div>
+    </div>
 
     <!-- User scripts -->
+    <script type="text/javascript" src="./ajax.js"></script>
+    <script type="text/javascript" src="./api.js"></script>
+    <script type="text/javascript" src="./pageBuilder.js"></script>
     <script type="text/javascript" src="./script.js"></script>
     <!-- Only for bootstrap purposes -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"

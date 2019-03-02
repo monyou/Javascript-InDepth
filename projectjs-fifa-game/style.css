@@ -1,0 +1,54 @@
+/* Main views styling */
+/* Matches */
+#matches {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+#matches #wrapper {
+    border-radius: 5px;
+    box-shadow: 0 0 10px black;
+    margin: 20px auto;
+    height: auto;
+    padding: 10px;
+    text-align: center;
+}
+
+#matches #wrapper #started_at {
+    margin-bottom: 20px;
+}
+
+#matches #wrapper #ended_at {
+    margin-top: 20px;
+}
+
+#matches #wrapper #away_team,
+#matches #wrapper #home_team {
+    font-weight: bold;
+}
+
+#matches #wrapper #score {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+/* Homescreen */
+#welcome {
+    font-size: 2em;
+    padding-top: 100px;
+    text-align: center;
+}
+
+/* Layout styling */
+nav {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+nav .navbar-brand {
+    color: white !important;
+    cursor: pointer !important;
+}
+
+#nav-top a {
+    cursor: pointer;
+}
