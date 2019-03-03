@@ -1,7 +1,7 @@
 let PageBuilder = {
     // Logic method for page rendering
     renderPage: function (e) {
-        switch (e.target.innerHTML) {
+        switch (e.target.innerText) {
             case "Teams":
                 this.buildTeamsPage();
                 break;
@@ -11,6 +11,12 @@ let PageBuilder = {
             case "Groups":
                 this.buildGroupsPage();
                 break;
+            case "Search":
+                this.buildSearchPage();
+                break;
+            case "History":
+                this.buildHistoryPage();
+                break;
             case "FIFA Game":
                 this.buildWelcomePage();
                 break;
@@ -19,11 +25,39 @@ let PageBuilder = {
 
     // Pages building
     buildTeamsPage: function () {
-        // Get main element
-        let teamsBox = document.querySelector("#teams");
+        let teamsList1 = document.querySelector("#teams > .row > #list_1");
+        let teamsList2 = document.querySelector("#teams > .row > #list_2");
 
-        // Fill the html with data
+        // Loading animation On
+        this.toggleLoadingAnimation();
 
+        // Make request to the server
+        new AJAX().request("GET", "https://worldcup.sfg.io/teams", null, true, (next) => {
+            let teams = JSON.parse(next.responseText);
+
+            // Removes old children
+            while (teamsList1.firstChild) teamsList1.removeChild(teamsList1.firstChild);
+            while (teamsList2.firstChild) teamsList2.removeChild(teamsList2.firstChild);
+
+            for (let i = 0; i < teams.length; i++) {
+                const team = teams[i];
+
+                let listItem = document.createElement("li");
+                listItem.setAttribute("class", "list-group-item");
+                listItem.innerText = `${team.country} (${team.fifa_code}), Group: ${team.group_letter}`;
+
+                // Appends the team
+                if (i + 1 > teams.length / 2) {
+                    teamsList2.appendChild(listItem);
+                } else {
+                    teamsList1.appendChild(listItem);
+                }
+
+            }
+
+            // Loading animation Off
+            this.toggleLoadingAnimation();
+        });
 
         // Show teams page
         this.showPage("teams");
@@ -37,6 +71,9 @@ let PageBuilder = {
         // Make request to the server
         new AJAX().request("GET", "https://worldcup.sfg.io/matches", null, true, (next) => {
             let matches = JSON.parse(next.responseText);
+
+            // Removes old children
+            while (matchesView.children.length > 1) matchesView.removeChild(matchesView.lastChild);
 
             // Cycles through every match and makes views
             for (let i = 0; i < matches.length; i++) {
@@ -52,14 +89,14 @@ let PageBuilder = {
 
                 let venue = document.createElement("div");
                 venue.setAttribute("class", "venue col-md-4");
-                venue.innerHTML = `Location: ${match.location}`;
+                venue.innerText = `Location: ${match.location}`;
 
                 let moreInfo = document.createElement("button");
                 moreInfo.setAttribute("type", "button");
                 moreInfo.setAttribute("data-toggle", "modal");
                 moreInfo.setAttribute("data-target", "#detailsModal");
                 moreInfo.setAttribute("class", "moreInfo btn btn-sm btn-info col-md-2");
-                moreInfo.innerHTML = "More Info";
+                moreInfo.innerText = "More Info";
                 // Data to be displayed in modal
                 moreInfo.setAttribute("data-title", `${match.home_team_country} vs ${match.away_team_country}, ${new Date(match.datetime).toLocaleDateString()}`);
                 moreInfo.setAttribute("data-location", `${match.location}, ${match.venue}`);
@@ -71,7 +108,7 @@ let PageBuilder = {
 
                 let started = document.createElement("div");
                 started.setAttribute("class", "started_at col-md-4");
-                started.innerHTML = `Date: ${new Date(match.datetime).toLocaleString()}`;
+                started.innerText = `Date: ${new Date(match.datetime).toLocaleString()}`;
 
                 // Home Team, Away Team Labels divs
                 let holderTeamsLabels = document.createElement("div");
@@ -79,11 +116,11 @@ let PageBuilder = {
 
                 let homeTeam_Lable = document.createElement("div");
                 homeTeam_Lable.setAttribute("class", "col-md-3 offset-md-1");
-                homeTeam_Lable.innerHTML = "Home Team";
+                homeTeam_Lable.innerText = "Home Team";
 
                 let awayTeam_Lable = document.createElement("div");
                 awayTeam_Lable.setAttribute("class", "col-md-3 offset-md-4");
-                awayTeam_Lable.innerHTML = "Away Team";
+                awayTeam_Lable.innerText = "Away Team";
 
                 // Home Team, Score, Away Team divs
                 let holderMatchData = document.createElement("div");
@@ -91,15 +128,15 @@ let PageBuilder = {
 
                 let homeTeam = document.createElement("div");
                 homeTeam.setAttribute("class", "home_team col-md-3 offset-md-1");
-                homeTeam.innerHTML = match.home_team_country;
+                homeTeam.innerText = match.home_team_country;
 
                 let score = document.createElement("div");
                 score.setAttribute("class", "score col-md-2 offset-md-1");
-                score.innerHTML = `${match.home_team.goals} : ${match.away_team.goals}`;
+                score.innerText = `${match.home_team.goals} : ${match.away_team.goals}`;
 
                 let awayTeam = document.createElement("div");
                 awayTeam.setAttribute("class", "away_team col-md-3 offset-md-1");
-                awayTeam.innerHTML = match.away_team_country;
+                awayTeam.innerText = match.away_team_country;
 
                 // Appends to wrapper div then to matches view div
                 holderMatchInfo.appendChild(venue);
@@ -125,14 +162,77 @@ let PageBuilder = {
         this.showPage("matches");
     },
     buildGroupsPage: function () {
+        let groupsBox = document.querySelector("#groups > div");
+
+        // Loading animation On
+        this.toggleLoadingAnimation();
+
+        // Make request to the server
+        new AJAX().request("GET", "https://worldcup.sfg.io/teams/group_results", null, true, (next) => {
+            let groups = JSON.parse(next.responseText);
+
+            // Removes old children
+            while (groupsBox.firstChild) groupsBox.removeChild(groupsBox.firstChild);
+
+            for (let i = 0; i < groups.length; i++) {
+                const group = groups[i];
+
+                let groupCard = document.createElement("div");
+                groupCard.setAttribute("class", "card bg-light col-md-3");
+
+                let groupCardHeader = document.createElement("div");
+                groupCardHeader.setAttribute("class", "card-header");
+                groupCardHeader.innerHTML = `<b>Group ${group.letter}</b>`;
+
+                let groupCardBody = document.createElement("div");
+                groupCardBody.setAttribute("class", "card-body");
+
+                let list = document.createElement("ul");
+                list.setAttribute("class", "list-group list0group-flush");
+
+                for (let k = 0; k < group.ordered_teams.length; k++) {
+                    const teamInGroup = group.ordered_teams[k];
+
+                    let listItem = document.createElement("li");
+                    listItem.setAttribute("class", "list-group-item");
+                    listItem.innerHTML = `${teamInGroup.points}pt. <b>${teamInGroup.country}</b> - W: ${teamInGroup.wins}, L: ${teamInGroup.losses}, D: ${teamInGroup.draws}`;
+
+                    list.appendChild(listItem);
+                }
+
+                // Appends to groups view
+                groupCard.appendChild(groupCardHeader);
+                groupCardBody.appendChild(list);
+                groupCard.appendChild(groupCardBody);
+                groupsBox.appendChild(groupCard);
+            }
+
+            // Loading animation Off
+            this.toggleLoadingAnimation();
+        });
+
+        // Show teams page
+        this.showPage("groups");
+    },
+    buildSearchPage: function () {
         // Get main element
-        let groupsBox = document.querySelector("#groups");
+        let searchBox = document.querySelector("#search");
 
         // Fill the html with data
 
 
-        // Show groups page
-        this.showPage("groups");
+        // Show search page
+        this.showPage("search");
+    },
+    buildHistoryPage: function () {
+        // Get main element
+        let historyBox = document.querySelector("#history");
+
+        // Fill the html with data
+
+
+        // Show history page
+        this.showPage("history");
     },
     buildWelcomePage: function () {
         this.showPage("welcome");
