@@ -73,85 +73,13 @@ let PageBuilder = {
             let matches = JSON.parse(next.responseText);
 
             // Removes old children
-            while (matchesView.children.length > 1) matchesView.removeChild(matchesView.lastChild);
+            while (matchesView.firstChild) matchesView.removeChild(matchesView.firstChild);
 
             // Cycles through every match and makes views
             for (let i = 0; i < matches.length; i++) {
                 const match = matches[i];
 
-                // Wrapper div
-                let wrapper = document.createElement("div");
-                wrapper.setAttribute("class", "wrapper");
-
-                // Venue, Date, Details divs
-                let holderMatchInfo = document.createElement("div");
-                holderMatchInfo.setAttribute("class", "row");
-
-                let venue = document.createElement("div");
-                venue.setAttribute("class", "venue col-md-4");
-                venue.innerText = `Location: ${match.location}`;
-
-                let moreInfo = document.createElement("button");
-                moreInfo.setAttribute("type", "button");
-                moreInfo.setAttribute("data-toggle", "modal");
-                moreInfo.setAttribute("data-target", "#detailsModal");
-                moreInfo.setAttribute("class", "moreInfo btn btn-sm btn-info col-md-2");
-                moreInfo.innerText = "More Info";
-                // Data to be displayed in modal
-                moreInfo.setAttribute("data-title", `${match.home_team_country} vs ${match.away_team_country}, ${new Date(match.datetime).toLocaleDateString()}`);
-                moreInfo.setAttribute("data-location", `${match.location}, ${match.venue}`);
-                moreInfo.setAttribute("data-weather", `${match.weather.temp_celsius}°C, ${match.weather.description}`);
-                moreInfo.setAttribute("data-home_team_name", `${match.home_team_country}`);
-                moreInfo.setAttribute("data-away_team_name", `${match.away_team_country}`);
-                moreInfo.setAttribute("data-home_players", `${JSON.stringify(match.home_team_statistics.starting_eleven)}`);
-                moreInfo.setAttribute("data-away_players", `${JSON.stringify(match.away_team_statistics.starting_eleven)}`);
-
-                let started = document.createElement("div");
-                started.setAttribute("class", "started_at col-md-4");
-                started.innerText = `Date: ${new Date(match.datetime).toLocaleString()}`;
-
-                // Home Team, Away Team Labels divs
-                let holderTeamsLabels = document.createElement("div");
-                holderTeamsLabels.setAttribute("class", "row d-none d-sm-flex");
-
-                let homeTeam_Lable = document.createElement("div");
-                homeTeam_Lable.setAttribute("class", "col-md-3 offset-md-1");
-                homeTeam_Lable.innerText = "Home Team";
-
-                let awayTeam_Lable = document.createElement("div");
-                awayTeam_Lable.setAttribute("class", "col-md-3 offset-md-4");
-                awayTeam_Lable.innerText = "Away Team";
-
-                // Home Team, Score, Away Team divs
-                let holderMatchData = document.createElement("div");
-                holderMatchData.setAttribute("class", "row");
-
-                let homeTeam = document.createElement("div");
-                homeTeam.setAttribute("class", "home_team col-md-3 offset-md-1");
-                homeTeam.innerText = match.home_team_country;
-
-                let score = document.createElement("div");
-                score.setAttribute("class", "score col-md-2 offset-md-1");
-                score.innerText = `${match.home_team.goals} : ${match.away_team.goals}`;
-
-                let awayTeam = document.createElement("div");
-                awayTeam.setAttribute("class", "away_team col-md-3 offset-md-1");
-                awayTeam.innerText = match.away_team_country;
-
-                // Appends to wrapper div then to matches view div
-                holderMatchInfo.appendChild(venue);
-                holderMatchInfo.appendChild(moreInfo);
-                holderMatchInfo.appendChild(started);
-                holderTeamsLabels.appendChild(homeTeam_Lable);
-                holderTeamsLabels.appendChild(awayTeam_Lable);
-                holderMatchData.appendChild(homeTeam);
-                holderMatchData.appendChild(score);
-                holderMatchData.appendChild(awayTeam);
-                wrapper.appendChild(holderMatchInfo);
-                wrapper.appendChild(holderTeamsLabels);
-                wrapper.appendChild(holderMatchData);
-
-                matchesView.appendChild(wrapper);
+                this.makeDesignOfMatchView(match, matchesView);
             }
 
             // Loading animation Off
@@ -215,11 +143,81 @@ let PageBuilder = {
         this.showPage("groups");
     },
     buildSearchPage: function () {
-        // Get main element
-        let searchBox = document.querySelector("#search");
+        let locationSelect = document.querySelector("#search > form > div > #location_select");
+        let teamSelect = document.querySelector("#search > form > div > #team_select");
+        let groupSelect = document.querySelector("#search > form > div > #group_select");
 
-        // Fill the html with data
+        // Loading animation On
+        this.toggleLoadingAnimation();
 
+        // Fills location dropdown
+        new AJAX().request("GET", "https://worldcup.sfg.io/matches", null, true, (next) => {
+            let matches = JSON.parse(next.responseText);
+
+            // Removes old children
+            while (locationSelect.firstChild) locationSelect.removeChild(locationSelect.firstChild);
+            while (teamSelect.firstChild) teamSelect.removeChild(teamSelect.firstChild);
+            while (groupSelect.firstChild) groupSelect.removeChild(groupSelect.firstChild);
+
+            // Add emtpy options to every select
+            let emptyOption = document.createElement("option");
+            emptyOption.setAttribute("value", "");
+            emptyOption.innerText = "";
+            let emptyOption2 = document.createElement("option");
+            emptyOption2.setAttribute("value", "");
+            emptyOption2.innerText = "";
+            let emptyOption3 = document.createElement("option");
+            emptyOption3.setAttribute("value", "");
+            emptyOption3.innerText = "";
+            locationSelect.appendChild(emptyOption);
+            teamSelect.appendChild(emptyOption2);
+            groupSelect.appendChild(emptyOption3);
+
+            for (let i = 0; i < matches.length; i++) {
+                const element = matches[i];
+
+                if (!locationSelect.innerHTML.includes(element.location)) {
+                    let optionLocation = document.createElement("option");
+                    optionLocation.setAttribute("value", `${element.location}`);
+                    optionLocation.innerText = `${element.location}`;
+
+                    locationSelect.appendChild(optionLocation);
+                }
+            }
+
+            // Fill team dropdown
+            new AJAX().request("GET", "https://worldcup.sfg.io/teams", null, true, (next) => {
+                let teams = JSON.parse(next.responseText);
+
+                for (let i = 0; i < teams.length; i++) {
+                    const element = teams[i];
+
+                    let optionTeam = document.createElement("option");
+                    optionTeam.setAttribute("value", `${element.country}`);
+                    optionTeam.innerText = `${element.country}`;
+
+                    teamSelect.appendChild(optionTeam);
+                }
+
+                // Fill group dropdown
+                new AJAX().request("GET", "https://worldcup.sfg.io/teams/group_results", null, true, (next) => {
+                    let groups = JSON.parse(next.responseText);
+
+                    for (let i = 0; i < groups.length; i++) {
+                        const element = groups[i];
+
+                        let optionGroup = document.createElement("option");
+                        optionGroup.setAttribute("value", `${element.letter}`);
+                        optionGroup.innerText = `${element.letter}`;
+
+                        groupSelect.appendChild(optionGroup);
+                    }
+
+                    // Loading animation Off
+                    this.toggleLoadingAnimation();
+                });
+            });
+        });
 
         // Show search page
         this.showPage("search");
@@ -236,6 +234,50 @@ let PageBuilder = {
     },
     buildWelcomePage: function () {
         this.showPage("welcome");
+    },
+
+    // Search functionality
+    search: function () {
+        let searchResult = document.querySelector("#search > #searchResult");
+        let locationSelectValue = document.querySelector("#search > form > div > #location_select").value;
+        let teamSelectValue = document.querySelector("#search > form > div > #team_select").value;
+        let groupSelectValue = document.querySelector("#search > form > div > #group_select").value;
+
+        // Loading animation On
+        this.toggleLoadingAnimation();
+
+        // Make request to the server
+        new AJAX().request("GET", "https://worldcup.sfg.io/matches", null, true, (next) => {
+            let matches = JSON.parse(next.responseText);
+
+            // Removes old children
+            while (searchResult.firstChild) searchResult.removeChild(searchResult.firstChild);
+
+            // Cycles through every match and makes views
+            for (let i = 0; i < matches.length; i++) {
+                const match = matches[i];
+
+                if (locationSelectValue !== "" && match.location === locationSelectValue) {
+                    this.makeDesignOfMatchView(match, searchResult)
+                }
+                if (teamSelectValue !== "" && (match.away_team_country === teamSelectValue || match.home_team_country === teamSelectValue)) {
+                    this.makeDesignOfMatchView(match, searchResult)
+                }
+                if (groupSelectValue !== "") {
+
+                }
+            }
+
+            // Loading animation Off
+            this.toggleLoadingAnimation();
+        });
+
+        // Reset the search criterias
+        for (let i = 0; i < document.querySelectorAll("#search > form > div > select").length; i++) {
+            const element = document.querySelectorAll("#search > form > div > select")[i];
+            element.value = "";
+            element.disabled = false;
+        }
     },
 
     // Rerender functionality of the content
@@ -263,6 +305,83 @@ let PageBuilder = {
         } else {
             animation.setAttribute("class", animation.getAttribute("class").trim() + " d-none");
         }
+    },
+
+    // Design of the single match view
+    makeDesignOfMatchView: function (match, destination) {
+        // Wrapper div
+        let wrapper = document.createElement("div");
+        wrapper.setAttribute("class", "wrapper");
+
+        // Venue, Date, Details divs
+        let holderMatchInfo = document.createElement("div");
+        holderMatchInfo.setAttribute("class", "row");
+
+        let venue = document.createElement("div");
+        venue.setAttribute("class", "venue col-md-4");
+        venue.innerText = `Location: ${match.location}`;
+
+        let moreInfo = document.createElement("button");
+        moreInfo.setAttribute("type", "button");
+        moreInfo.setAttribute("data-toggle", "modal");
+        moreInfo.setAttribute("data-target", "#detailsModal");
+        moreInfo.setAttribute("class", "moreInfo btn btn-sm btn-info col-md-2");
+        moreInfo.innerText = "More Info";
+        // Data to be displayed in modal
+        moreInfo.setAttribute("data-title", `${match.home_team_country} vs ${match.away_team_country}, ${new Date(match.datetime).toLocaleDateString()}`);
+        moreInfo.setAttribute("data-location", `${match.location}, ${match.venue}`);
+        moreInfo.setAttribute("data-weather", `${match.weather.temp_celsius}°C, ${match.weather.description}`);
+        moreInfo.setAttribute("data-home_team_name", `${match.home_team_country}`);
+        moreInfo.setAttribute("data-away_team_name", `${match.away_team_country}`);
+        moreInfo.setAttribute("data-home_players", `${JSON.stringify(match.home_team_statistics.starting_eleven)}`);
+        moreInfo.setAttribute("data-away_players", `${JSON.stringify(match.away_team_statistics.starting_eleven)}`);
+
+        let started = document.createElement("div");
+        started.setAttribute("class", "started_at col-md-4");
+        started.innerText = `Date: ${new Date(match.datetime).toLocaleString()}`;
+
+        // Home Team, Away Team Labels divs
+        let holderTeamsLabels = document.createElement("div");
+        holderTeamsLabels.setAttribute("class", "row d-none d-sm-flex");
+
+        let homeTeam_Lable = document.createElement("div");
+        homeTeam_Lable.setAttribute("class", "col-md-3 offset-md-1");
+        homeTeam_Lable.innerText = "Home Team";
+
+        let awayTeam_Lable = document.createElement("div");
+        awayTeam_Lable.setAttribute("class", "col-md-3 offset-md-4");
+        awayTeam_Lable.innerText = "Away Team";
+
+        // Home Team, Score, Away Team divs
+        let holderMatchData = document.createElement("div");
+        holderMatchData.setAttribute("class", "row");
+
+        let homeTeam = document.createElement("div");
+        homeTeam.setAttribute("class", "home_team col-md-3 offset-md-1");
+        homeTeam.innerText = match.home_team_country;
+
+        let score = document.createElement("div");
+        score.setAttribute("class", "score col-md-2 offset-md-1");
+        score.innerText = `${match.home_team.goals} : ${match.away_team.goals}`;
+
+        let awayTeam = document.createElement("div");
+        awayTeam.setAttribute("class", "away_team col-md-3 offset-md-1");
+        awayTeam.innerText = match.away_team_country;
+
+        // Appends to wrapper div then to matches view div
+        holderMatchInfo.appendChild(venue);
+        holderMatchInfo.appendChild(moreInfo);
+        holderMatchInfo.appendChild(started);
+        holderTeamsLabels.appendChild(homeTeam_Lable);
+        holderTeamsLabels.appendChild(awayTeam_Lable);
+        holderMatchData.appendChild(homeTeam);
+        holderMatchData.appendChild(score);
+        holderMatchData.appendChild(awayTeam);
+        wrapper.appendChild(holderMatchInfo);
+        wrapper.appendChild(holderTeamsLabels);
+        wrapper.appendChild(holderMatchData);
+
+        destination.appendChild(wrapper);
     }
 }
 
@@ -298,5 +417,52 @@ $('#detailsModal').on('shown.bs.modal', function (event) {
     for (let i = 0; i < awayTeamPlayers.length; i++) {
         const element = awayTeamPlayers[i];
         modal.find(".modal-body > .container-fluid > .row > #away_players > ul").append(`<li class="list-group-item">N${element.shirt_number} ${element.name}, ${element.position}</li>`);
+    }
+});
+
+//Search only by one criteria
+document.querySelector("#search > form > div > #location_select").addEventListener("change", function (event) {
+    if (event.target.value !== "") {
+        for (let i = 0; i < document.querySelectorAll("#search > form > div > select").length; i++) {
+            const element = document.querySelectorAll("#search > form > div > select")[i];
+            if (element.id !== event.target.id) {
+                element.disabled = true;
+            }
+        }
+    } else {
+        for (let i = 0; i < document.querySelectorAll("#search > form > div > select").length; i++) {
+            const element = document.querySelectorAll("#search > form > div > select")[i];
+            element.disabled = false;
+        }
+    }
+});
+document.querySelector("#search > form > div > #team_select").addEventListener("change", function (event) {
+    if (event.target.value !== "") {
+        for (let i = 0; i < document.querySelectorAll("#search > form > div > select").length; i++) {
+            const element = document.querySelectorAll("#search > form > div > select")[i];
+            if (element.id !== event.target.id) {
+                element.disabled = true;
+            }
+        }
+    } else {
+        for (let i = 0; i < document.querySelectorAll("#search > form > div > select").length; i++) {
+            const element = document.querySelectorAll("#search > form > div > select")[i];
+            element.disabled = false;
+        }
+    }
+});
+document.querySelector("#search > form > div > #group_select").addEventListener("change", function (event) {
+    if (event.target.value !== "") {
+        for (let i = 0; i < document.querySelectorAll("#search > form > div > select").length; i++) {
+            const element = document.querySelectorAll("#search > form > div > select")[i];
+            if (element.id !== event.target.id) {
+                element.disabled = true;
+            }
+        }
+    } else {
+        for (let i = 0; i < document.querySelectorAll("#search > form > div > select").length; i++) {
+            const element = document.querySelectorAll("#search > form > div > select")[i];
+            element.disabled = false;
+        }
     }
 });

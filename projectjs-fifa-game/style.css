@@ -1,10 +1,10 @@
+#detailsModal .modal-body div {
+    padding-bottom: 20px;
+}
+
 /* Matches styling*/
 #matches {
     font-family: 'Courier New', Courier, monospace;
-}
-
-#matches #detailsModal .modal-body div {
-    padding-bottom: 20px;
 }
 
 #matches .wrapper {
@@ -58,6 +58,50 @@
 }
 
 /* End Group Styling */
+
+/* Search Styling */
+#search form #searchBtn {
+    margin-left: 37.5%;
+}
+
+#search #searchResult {
+    margin-top: 20px;
+}
+
+#search #searchResult .wrapper {
+    border-radius: 5px;
+    box-shadow: 0 0 10px black;
+    margin: 20px auto;
+    height: auto;
+    padding: 10px;
+    text-align: center;
+}
+
+#search #searchResult .wrapper .moreInfo {
+    margin: 0 auto;
+    height: 40px;
+    width: 90%;
+}
+
+#search #searchResult .wrapper .started_at {
+    margin-bottom: 20px;
+}
+
+#search #searchResult .wrapper .ended_at {
+    margin-top: 20px;
+}
+
+#search #searchResult .wrapper .away_team,
+#search #searchResult .wrapper .home_team {
+    font-weight: bold;
+}
+
+#search #searchResult .wrapper .score {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+/* End Search Styling */
 
 /* Loading Animation */
 .animationload {
@@ -141,14 +185,21 @@ nav .navbar-brand {
 /* End Layout Styling */
 
 /* Media rules */
-@media only screen and (max-width: 576px) {
+@media only screen and (max-width: 768px) {
 
     /* Groups Styling */
     #groups .row .card {
-        margin-left: 0;
+        margin: 10px;
     }
 
     /* End Group Styling */
+
+    /* Search Styling */
+    #search form #searchBtn {
+        margin-left: 13%;
+    }
+
+    /* End Search Styling */
 }
 
 /* End Media rules */
