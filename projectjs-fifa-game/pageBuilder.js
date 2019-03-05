@@ -31,33 +31,28 @@ let PageBuilder = {
         // Loading animation On
         this.toggleLoadingAnimation();
 
-        // Make request to the server
-        new AJAX().request("GET", "https://worldcup.sfg.io/teams", null, true, (next) => {
-            let teams = JSON.parse(next.responseText);
+        // Removes old children
+        while (teamsList1.firstChild) teamsList1.removeChild(teamsList1.firstChild);
+        while (teamsList2.firstChild) teamsList2.removeChild(teamsList2.firstChild);
 
-            // Removes old children
-            while (teamsList1.firstChild) teamsList1.removeChild(teamsList1.firstChild);
-            while (teamsList2.firstChild) teamsList2.removeChild(teamsList2.firstChild);
+        for (let i = 0; i < teams.length; i++) {
+            const team = teams[i];
 
-            for (let i = 0; i < teams.length; i++) {
-                const team = teams[i];
+            let listItem = document.createElement("li");
+            listItem.setAttribute("class", "list-group-item");
+            listItem.innerText = `${team.country} (${team.fifa_code}), Group: ${team.group_letter}`;
 
-                let listItem = document.createElement("li");
-                listItem.setAttribute("class", "list-group-item");
-                listItem.innerText = `${team.country} (${team.fifa_code}), Group: ${team.group_letter}`;
-
-                // Appends the team
-                if (i + 1 > teams.length / 2) {
-                    teamsList2.appendChild(listItem);
-                } else {
-                    teamsList1.appendChild(listItem);
-                }
-
+            // Appends the team
+            if (i + 1 > teams.length / 2) {
+                teamsList2.appendChild(listItem);
+            } else {
+                teamsList1.appendChild(listItem);
             }
 
-            // Loading animation Off
-            this.toggleLoadingAnimation();
-        });
+        }
+
+        // Loading animation Off
+        this.toggleLoadingAnimation();
 
         // Show teams page
         this.showPage("teams");
@@ -68,23 +63,18 @@ let PageBuilder = {
         // Loading animation On
         this.toggleLoadingAnimation();
 
-        // Make request to the server
-        new AJAX().request("GET", "https://worldcup.sfg.io/matches", null, true, (next) => {
-            let matches = JSON.parse(next.responseText);
+        // Removes old children
+        while (matchesView.firstChild) matchesView.removeChild(matchesView.firstChild);
 
-            // Removes old children
-            while (matchesView.firstChild) matchesView.removeChild(matchesView.firstChild);
+        // Cycles through every match and makes views
+        for (let i = 0; i < matches.length; i++) {
+            const match = matches[i];
 
-            // Cycles through every match and makes views
-            for (let i = 0; i < matches.length; i++) {
-                const match = matches[i];
+            this.makeDesignOfMatchView(match, matchesView);
+        }
 
-                this.makeDesignOfMatchView(match, matchesView);
-            }
-
-            // Loading animation Off
-            this.toggleLoadingAnimation();
-        });
+        // Loading animation Off
+        this.toggleLoadingAnimation();
 
         // Show matches page
         this.showPage("matches");
@@ -95,49 +85,44 @@ let PageBuilder = {
         // Loading animation On
         this.toggleLoadingAnimation();
 
-        // Make request to the server
-        new AJAX().request("GET", "https://worldcup.sfg.io/teams/group_results", null, true, (next) => {
-            let groups = JSON.parse(next.responseText);
+        // Removes old children
+        while (groupsBox.firstChild) groupsBox.removeChild(groupsBox.firstChild);
 
-            // Removes old children
-            while (groupsBox.firstChild) groupsBox.removeChild(groupsBox.firstChild);
+        for (let i = 0; i < groups.length; i++) {
+            const group = groups[i];
 
-            for (let i = 0; i < groups.length; i++) {
-                const group = groups[i];
+            let groupCard = document.createElement("div");
+            groupCard.setAttribute("class", "card bg-light col-md-3");
 
-                let groupCard = document.createElement("div");
-                groupCard.setAttribute("class", "card bg-light col-md-3");
+            let groupCardHeader = document.createElement("div");
+            groupCardHeader.setAttribute("class", "card-header");
+            groupCardHeader.innerHTML = `<b>Group ${group.letter}</b>`;
 
-                let groupCardHeader = document.createElement("div");
-                groupCardHeader.setAttribute("class", "card-header");
-                groupCardHeader.innerHTML = `<b>Group ${group.letter}</b>`;
+            let groupCardBody = document.createElement("div");
+            groupCardBody.setAttribute("class", "card-body");
 
-                let groupCardBody = document.createElement("div");
-                groupCardBody.setAttribute("class", "card-body");
+            let list = document.createElement("ul");
+            list.setAttribute("class", "list-group list0group-flush");
 
-                let list = document.createElement("ul");
-                list.setAttribute("class", "list-group list0group-flush");
+            for (let k = 0; k < group.ordered_teams.length; k++) {
+                const teamInGroup = group.ordered_teams[k];
 
-                for (let k = 0; k < group.ordered_teams.length; k++) {
-                    const teamInGroup = group.ordered_teams[k];
+                let listItem = document.createElement("li");
+                listItem.setAttribute("class", "list-group-item");
+                listItem.innerHTML = `${teamInGroup.points}pt. <b>${teamInGroup.country}</b> - W: ${teamInGroup.wins}, L: ${teamInGroup.losses}, D: ${teamInGroup.draws}`;
 
-                    let listItem = document.createElement("li");
-                    listItem.setAttribute("class", "list-group-item");
-                    listItem.innerHTML = `${teamInGroup.points}pt. <b>${teamInGroup.country}</b> - W: ${teamInGroup.wins}, L: ${teamInGroup.losses}, D: ${teamInGroup.draws}`;
-
-                    list.appendChild(listItem);
-                }
-
-                // Appends to groups view
-                groupCard.appendChild(groupCardHeader);
-                groupCardBody.appendChild(list);
-                groupCard.appendChild(groupCardBody);
-                groupsBox.appendChild(groupCard);
+                list.appendChild(listItem);
             }
 
-            // Loading animation Off
-            this.toggleLoadingAnimation();
-        });
+            // Appends to groups view
+            groupCard.appendChild(groupCardHeader);
+            groupCardBody.appendChild(list);
+            groupCard.appendChild(groupCardBody);
+            groupsBox.appendChild(groupCard);
+        }
+
+        // Loading animation Off
+        this.toggleLoadingAnimation();
 
         // Show teams page
         this.showPage("groups");
@@ -150,82 +135,73 @@ let PageBuilder = {
         // Loading animation On
         this.toggleLoadingAnimation();
 
-        // Fills location dropdown
-        new AJAX().request("GET", "https://worldcup.sfg.io/matches", null, true, (next) => {
-            let matches = JSON.parse(next.responseText);
+        // Removes old children
+        while (locationSelect.firstChild) locationSelect.removeChild(locationSelect.firstChild);
+        while (teamSelect.firstChild) teamSelect.removeChild(teamSelect.firstChild);
+        while (dateSelect.firstChild) dateSelect.removeChild(dateSelect.firstChild);
 
-            // Removes old children
-            while (locationSelect.firstChild) locationSelect.removeChild(locationSelect.firstChild);
-            while (teamSelect.firstChild) teamSelect.removeChild(teamSelect.firstChild);
-            while (dateSelect.firstChild) dateSelect.removeChild(dateSelect.firstChild);
+        // Add emtpy options to every select
+        let emptyOption = document.createElement("option");
+        emptyOption.setAttribute("value", "");
+        emptyOption.innerText = "";
+        let emptyOption2 = document.createElement("option");
+        emptyOption2.setAttribute("value", "");
+        emptyOption2.innerText = "";
+        let emptyOption3 = document.createElement("option");
+        emptyOption3.setAttribute("value", "");
+        emptyOption3.innerText = "";
+        locationSelect.appendChild(emptyOption);
+        teamSelect.appendChild(emptyOption2);
+        dateSelect.appendChild(emptyOption3);
 
-            // Add emtpy options to every select
-            let emptyOption = document.createElement("option");
-            emptyOption.setAttribute("value", "");
-            emptyOption.innerText = "";
-            let emptyOption2 = document.createElement("option");
-            emptyOption2.setAttribute("value", "");
-            emptyOption2.innerText = "";
-            let emptyOption3 = document.createElement("option");
-            emptyOption3.setAttribute("value", "");
-            emptyOption3.innerText = "";
-            locationSelect.appendChild(emptyOption);
-            teamSelect.appendChild(emptyOption2);
-            dateSelect.appendChild(emptyOption3);
+        // Fill location dropdown
+        for (let i = 0; i < matches.length; i++) {
+            const element = matches[i];
 
-            for (let i = 0; i < matches.length; i++) {
-                const element = matches[i];
+            if (!locationSelect.innerHTML.includes(element.location)) {
+                let optionLocation = document.createElement("option");
+                optionLocation.setAttribute("value", `${element.location}`);
+                optionLocation.innerText = `${element.location}`;
 
-                if (!locationSelect.innerHTML.includes(element.location)) {
-                    let optionLocation = document.createElement("option");
-                    optionLocation.setAttribute("value", `${element.location}`);
-                    optionLocation.innerText = `${element.location}`;
-
-                    locationSelect.appendChild(optionLocation);
-                }
-
+                locationSelect.appendChild(optionLocation);
             }
 
+        }
 
-            // Fill match dates dropdown 6/2018
-            let date = null;
-            for (let i = 13; i <= 29; i++) {
-                date = new Date(2018, 5, i);
-                let optionDate = document.createElement("option");
-                optionDate.setAttribute("value", `${date}`);
-                optionDate.innerText = `${date.getMonth()+1}/${date.getDate()}/2018`;
+        // Fill match dates dropdown 6/2018
+        let date = null;
+        for (let i = 13; i <= 29; i++) {
+            date = new Date(2018, 5, i);
+            let optionDate = document.createElement("option");
+            optionDate.setAttribute("value", `${date}`);
+            optionDate.innerText = `${date.getMonth()+1}/${date.getDate()}/2018`;
 
-                dateSelect.appendChild(optionDate);
-            }
+            dateSelect.appendChild(optionDate);
+        }
 
-            // Fill match dates dropdown 7/2018
-            for (let i = 1; i <= 16; i++) {
-                date = new Date(2018, 6, i);
-                let optionDate2 = document.createElement("option");
-                optionDate2.setAttribute("value", `${date}`);
-                optionDate2.innerText = `${date.getMonth()+1}/${date.getDate()}/2018`;
+        // Fill match dates dropdown 7/2018
+        for (let i = 1; i <= 16; i++) {
+            date = new Date(2018, 6, i);
+            let optionDate2 = document.createElement("option");
+            optionDate2.setAttribute("value", `${date}`);
+            optionDate2.innerText = `${date.getMonth()+1}/${date.getDate()}/2018`;
 
-                dateSelect.appendChild(optionDate2);
-            }
+            dateSelect.appendChild(optionDate2);
+        }
 
-            // Fill team dropdown
-            new AJAX().request("GET", "https://worldcup.sfg.io/teams", null, true, (next) => {
-                let teams = JSON.parse(next.responseText);
+        // Fill team dropdown
+        for (let i = 0; i < teams.length; i++) {
+            const element = teams[i];
 
-                for (let i = 0; i < teams.length; i++) {
-                    const element = teams[i];
+            let optionTeam = document.createElement("option");
+            optionTeam.setAttribute("value", `${element.country}`);
+            optionTeam.innerText = `${element.country}`;
 
-                    let optionTeam = document.createElement("option");
-                    optionTeam.setAttribute("value", `${element.country}`);
-                    optionTeam.innerText = `${element.country}`;
+            teamSelect.appendChild(optionTeam);
+        }
 
-                    teamSelect.appendChild(optionTeam);
-                }
-
-                // Loading animation Off
-                this.toggleLoadingAnimation();
-            });
-        });
+        // Loading animation Off
+        this.toggleLoadingAnimation();
 
         // Show search page
         this.showPage("search");
@@ -254,41 +230,36 @@ let PageBuilder = {
         // Loading animation On
         this.toggleLoadingAnimation();
 
-        // Make request to the server
-        new AJAX().request("GET", "https://worldcup.sfg.io/matches", null, true, (next) => {
-            let matches = JSON.parse(next.responseText);
+        // Removes old children
+        while (searchResult.firstChild) searchResult.removeChild(searchResult.firstChild);
 
-            // Removes old children
-            while (searchResult.firstChild) searchResult.removeChild(searchResult.firstChild);
+        // Header text of results
+        let resultsHeader = document.createElement("h5");
+        resultsHeader.setAttribute("class", "text-center mt-2");
+        resultsHeader.innerText = "Results:";
+        searchResult.appendChild(resultsHeader);
 
-            // Header text of results
-            let resultsHeader = document.createElement("h5");
-            resultsHeader.setAttribute("class", "text-center mt-2");
-            resultsHeader.innerText = "Results:";
-            searchResult.appendChild(resultsHeader);
+        // Cycles through every match and makes views
+        for (let i = 0; i < matches.length; i++) {
+            const match = matches[i];
 
-            // Cycles through every match and makes views
-            for (let i = 0; i < matches.length; i++) {
-                const match = matches[i];
-
-                if (locationSelectValue !== "" && match.location === locationSelectValue) {
-                    this.makeDesignOfMatchView(match, searchResult)
-                }
-                if (teamSelectValue !== "" && (match.away_team_country === teamSelectValue || match.home_team_country === teamSelectValue)) {
-                    this.makeDesignOfMatchView(match, searchResult)
-                }
-                if (dateSelectValue !== "" && new Date(match.datetime).getMonth() === new Date(dateSelectValue).getMonth() && new Date(match.datetime).getDate() === new Date(dateSelectValue).getDate()) {
-                    this.makeDesignOfMatchView(match, searchResult)
-                }
+            if (locationSelectValue !== "" && match.location === locationSelectValue) {
+                this.makeDesignOfMatchView(match, searchResult)
             }
-
-            if (searchResult.children.length === 1) {
-                resultsHeader.innerText = "No results found!"
+            if (teamSelectValue !== "" && (match.away_team_country === teamSelectValue || match.home_team_country === teamSelectValue)) {
+                this.makeDesignOfMatchView(match, searchResult)
             }
+            if (dateSelectValue !== "" && new Date(match.datetime).getMonth() === new Date(dateSelectValue).getMonth() && new Date(match.datetime).getDate() === new Date(dateSelectValue).getDate()) {
+                this.makeDesignOfMatchView(match, searchResult)
+            }
+        }
 
-            // Loading animation Off
-            this.toggleLoadingAnimation();
-        });
+        if (searchResult.children.length === 1) {
+            resultsHeader.innerText = "No results found!"
+        }
+
+        // Loading animation Off
+        this.toggleLoadingAnimation();
 
         // Reset the search criterias
         for (let i = 0; i < document.querySelectorAll("#search > form > div > select").length; i++) {
