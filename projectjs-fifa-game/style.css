@@ -7,7 +7,7 @@
     font-family: 'Courier New', Courier, monospace;
 }
 
-#matches .wrapper {
+#matches div .wrapper {
     border-radius: 5px;
     box-shadow: 0 0 10px black;
     margin: 20px auto;
@@ -16,26 +16,26 @@
     text-align: center;
 }
 
-#matches .wrapper .moreInfo {
+#matches div .wrapper .moreInfo {
     margin: 0 auto;
     height: 40px;
     width: 90%;
 }
 
-#matches .wrapper .started_at {
+#matches div .wrapper .started_at {
     margin-bottom: 20px;
 }
 
-#matches .wrapper .ended_at {
+#matches div .wrapper .ended_at {
     margin-top: 20px;
 }
 
-#matches .wrapper .away_team,
-#matches .wrapper .home_team {
+#matches div .wrapper .away_team,
+#matches div .wrapper .home_team {
     font-weight: bold;
 }
 
-#matches .wrapper .score {
+#matches div .wrapper .score {
     font-weight: bold;
     font-size: 1.1em;
 }
@@ -194,9 +194,22 @@ nav .navbar-brand {
 
     /* End Group Styling */
 
+    /* Matches Styling */
+    #matches div .wrapper {
+        width: 90%;
+        flex: none;
+    }
+
+    /* End Matches Styling */
+
     /* Search Styling */
     #search form #searchBtn {
         margin-left: 13%;
+    }
+
+    #search #searchResult .wrapper {
+        width: 90%;
+        flex: none;
     }
 
     /* End Search Styling */

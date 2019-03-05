@@ -17,6 +17,8 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr"
         crossorigin="anonymous">
 
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+
     <title>FIFA Game</title>
 </head>
 
@@ -61,11 +63,14 @@
         <div id="content" class="row">
             <!-- Welcome Text -->
             <div id="welcome" class="col-md-8 offset-md-2">
-                Welcome to the FIFA Statistics Manager!
+                Welcome to the FIFA World Cup 2018 <br>
+                Statistics Manager
             </div>
             <!-- Matches view -->
             <div id="matches" class="d-none col-md-8 offset-md-2">
-                <!-- Main content filled from javascript PageBuilder method -->
+                <div class="row">
+                    <!-- Main content filled from javascript PageBuilder method -->
+                </div>
             </div>
             <!-- Teams view -->
             <div id="teams" class="d-none col-md-8 offset-md-2">
@@ -101,8 +106,8 @@
                         </select>
                     </div>
                     <div class="form-group col-md-4">
-                        <label for="group_select">Group</label>
-                        <select id="group_select" class="form-control">
+                        <label for="date_select">Match Date</label>
+                        <select id="date_select" class="form-control">
                             <!-- Filled from javascript PageBuilder method -->
                         </select>
                     </div>

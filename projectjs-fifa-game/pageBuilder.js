@@ -63,7 +63,7 @@ let PageBuilder = {
         this.showPage("teams");
     },
     buildMatchesPage: function () {
-        let matchesView = document.querySelector("#matches");
+        let matchesView = document.querySelector("#matches > div");
 
         // Loading animation On
         this.toggleLoadingAnimation();
@@ -145,7 +145,7 @@ let PageBuilder = {
     buildSearchPage: function () {
         let locationSelect = document.querySelector("#search > form > div > #location_select");
         let teamSelect = document.querySelector("#search > form > div > #team_select");
-        let groupSelect = document.querySelector("#search > form > div > #group_select");
+        let dateSelect = document.querySelector("#search > form > div > #date_select");
 
         // Loading animation On
         this.toggleLoadingAnimation();
@@ -157,7 +157,7 @@ let PageBuilder = {
             // Removes old children
             while (locationSelect.firstChild) locationSelect.removeChild(locationSelect.firstChild);
             while (teamSelect.firstChild) teamSelect.removeChild(teamSelect.firstChild);
-            while (groupSelect.firstChild) groupSelect.removeChild(groupSelect.firstChild);
+            while (dateSelect.firstChild) dateSelect.removeChild(dateSelect.firstChild);
 
             // Add emtpy options to every select
             let emptyOption = document.createElement("option");
@@ -171,7 +171,7 @@ let PageBuilder = {
             emptyOption3.innerText = "";
             locationSelect.appendChild(emptyOption);
             teamSelect.appendChild(emptyOption2);
-            groupSelect.appendChild(emptyOption3);
+            dateSelect.appendChild(emptyOption3);
 
             for (let i = 0; i < matches.length; i++) {
                 const element = matches[i];
@@ -183,6 +183,29 @@ let PageBuilder = {
 
                     locationSelect.appendChild(optionLocation);
                 }
+
+            }
+
+
+            // Fill match dates dropdown 6/2018
+            let date = null;
+            for (let i = 13; i <= 29; i++) {
+                date = new Date(2018, 5, i);
+                let optionDate = document.createElement("option");
+                optionDate.setAttribute("value", `${date}`);
+                optionDate.innerText = `${date.getMonth()+1}/${date.getDate()}/2018`;
+
+                dateSelect.appendChild(optionDate);
+            }
+
+            // Fill match dates dropdown 7/2018
+            for (let i = 1; i <= 16; i++) {
+                date = new Date(2018, 6, i);
+                let optionDate2 = document.createElement("option");
+                optionDate2.setAttribute("value", `${date}`);
+                optionDate2.innerText = `${date.getMonth()+1}/${date.getDate()}/2018`;
+
+                dateSelect.appendChild(optionDate2);
             }
 
             // Fill team dropdown
@@ -199,23 +222,8 @@ let PageBuilder = {
                     teamSelect.appendChild(optionTeam);
                 }
 
-                // Fill group dropdown
-                new AJAX().request("GET", "https://worldcup.sfg.io/teams/group_results", null, true, (next) => {
-                    let groups = JSON.parse(next.responseText);
-
-                    for (let i = 0; i < groups.length; i++) {
-                        const element = groups[i];
-
-                        let optionGroup = document.createElement("option");
-                        optionGroup.setAttribute("value", `${element.letter}`);
-                        optionGroup.innerText = `${element.letter}`;
-
-                        groupSelect.appendChild(optionGroup);
-                    }
-
-                    // Loading animation Off
-                    this.toggleLoadingAnimation();
-                });
+                // Loading animation Off
+                this.toggleLoadingAnimation();
             });
         });
 
@@ -241,7 +249,7 @@ let PageBuilder = {
         let searchResult = document.querySelector("#search > #searchResult");
         let locationSelectValue = document.querySelector("#search > form > div > #location_select").value;
         let teamSelectValue = document.querySelector("#search > form > div > #team_select").value;
-        let groupSelectValue = document.querySelector("#search > form > div > #group_select").value;
+        let dateSelectValue = document.querySelector("#search > form > div > #date_select").value;
 
         // Loading animation On
         this.toggleLoadingAnimation();
@@ -253,6 +261,12 @@ let PageBuilder = {
             // Removes old children
             while (searchResult.firstChild) searchResult.removeChild(searchResult.firstChild);
 
+            // Header text of results
+            let resultsHeader = document.createElement("h5");
+            resultsHeader.setAttribute("class", "text-center mt-2");
+            resultsHeader.innerText = "Results:";
+            searchResult.appendChild(resultsHeader);
+
             // Cycles through every match and makes views
             for (let i = 0; i < matches.length; i++) {
                 const match = matches[i];
@@ -263,9 +277,13 @@ let PageBuilder = {
                 if (teamSelectValue !== "" && (match.away_team_country === teamSelectValue || match.home_team_country === teamSelectValue)) {
                     this.makeDesignOfMatchView(match, searchResult)
                 }
-                if (groupSelectValue !== "") {
-
+                if (dateSelectValue !== "" && new Date(match.datetime).getMonth() === new Date(dateSelectValue).getMonth() && new Date(match.datetime).getDate() === new Date(dateSelectValue).getDate()) {
+                    this.makeDesignOfMatchView(match, searchResult)
                 }
+            }
+
+            if (searchResult.children.length === 1) {
+                resultsHeader.innerText = "No results found!"
             }
 
             // Loading animation Off
@@ -311,7 +329,7 @@ let PageBuilder = {
     makeDesignOfMatchView: function (match, destination) {
         // Wrapper div
         let wrapper = document.createElement("div");
-        wrapper.setAttribute("class", "wrapper");
+        wrapper.setAttribute("class", "wrapper col-12");
 
         // Venue, Date, Details divs
         let holderMatchInfo = document.createElement("div");
@@ -451,7 +469,7 @@ document.querySelector("#search > form > div > #team_select").addEventListener("
         }
     }
 });
-document.querySelector("#search > form > div > #group_select").addEventListener("change", function (event) {
+document.querySelector("#search > form > div > #date_select").addEventListener("change", function (event) {
     if (event.target.value !== "") {
         for (let i = 0; i < document.querySelectorAll("#search > form > div > select").length; i++) {
             const element = document.querySelectorAll("#search > form > div > select")[i];
