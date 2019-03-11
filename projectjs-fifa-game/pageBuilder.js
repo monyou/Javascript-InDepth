@@ -3,21 +3,27 @@ let PageBuilder = {
     renderPage: function (e) {
         switch (e.target.innerText) {
             case "Teams":
+                this.logUserInteraction("Teams page visited");
                 this.buildTeamsPage();
                 break;
             case "Matches":
+                this.logUserInteraction("Matches page visited");
                 this.buildMatchesPage();
                 break;
             case "Groups":
+                this.logUserInteraction("Groups page visited");
                 this.buildGroupsPage();
                 break;
             case "Search":
+                this.logUserInteraction("Search page visited");
                 this.buildSearchPage();
                 break;
             case "History":
+                this.logUserInteraction("History page visited");
                 this.buildHistoryPage();
                 break;
             case "FIFA Game":
+                this.logUserInteraction("Welcome page visited");
                 this.buildWelcomePage();
                 break;
         }
@@ -27,9 +33,6 @@ let PageBuilder = {
     buildTeamsPage: function () {
         let teamsList1 = document.querySelector("#teams > .row > #list_1");
         let teamsList2 = document.querySelector("#teams > .row > #list_2");
-
-        // Loading animation On
-        this.toggleLoadingAnimation();
 
         // Removes old children
         while (teamsList1.firstChild) teamsList1.removeChild(teamsList1.firstChild);
@@ -51,17 +54,11 @@ let PageBuilder = {
 
         }
 
-        // Loading animation Off
-        this.toggleLoadingAnimation();
-
         // Show teams page
         this.showPage("teams");
     },
     buildMatchesPage: function () {
         let matchesView = document.querySelector("#matches > div");
-
-        // Loading animation On
-        this.toggleLoadingAnimation();
 
         // Removes old children
         while (matchesView.firstChild) matchesView.removeChild(matchesView.firstChild);
@@ -73,17 +70,11 @@ let PageBuilder = {
             this.makeDesignOfMatchView(match, matchesView);
         }
 
-        // Loading animation Off
-        this.toggleLoadingAnimation();
-
         // Show matches page
         this.showPage("matches");
     },
     buildGroupsPage: function () {
         let groupsBox = document.querySelector("#groups > div");
-
-        // Loading animation On
-        this.toggleLoadingAnimation();
 
         // Removes old children
         while (groupsBox.firstChild) groupsBox.removeChild(groupsBox.firstChild);
@@ -121,9 +112,6 @@ let PageBuilder = {
             groupsBox.appendChild(groupCard);
         }
 
-        // Loading animation Off
-        this.toggleLoadingAnimation();
-
         // Show teams page
         this.showPage("groups");
     },
@@ -131,9 +119,6 @@ let PageBuilder = {
         let locationSelect = document.querySelector("#search > form > div > #location_select");
         let teamSelect = document.querySelector("#search > form > div > #team_select");
         let dateSelect = document.querySelector("#search > form > div > #date_select");
-
-        // Loading animation On
-        this.toggleLoadingAnimation();
 
         // Removes old children
         while (locationSelect.firstChild) locationSelect.removeChild(locationSelect.firstChild);
@@ -200,18 +185,36 @@ let PageBuilder = {
             teamSelect.appendChild(optionTeam);
         }
 
-        // Loading animation Off
-        this.toggleLoadingAnimation();
-
         // Show search page
         this.showPage("search");
     },
     buildHistoryPage: function () {
-        // Get main element
-        let historyBox = document.querySelector("#history");
+        let historyTableBody = document.querySelector("#history > #history_table > tbody");
 
-        // Fill the html with data
+        // Removes old children(records)
+        while (historyTableBody.firstChild) historyTableBody.removeChild(historyTableBody.firstChild);
 
+        let historySortedDescTimeStamp = history.sort((a, b) => (new Date(a.timestamp) < new Date(b.timestamp)) ? 1 : ((new Date(b.timestamp) < new Date(a.timestamp)) ? -1 : 0));
+        for (let i = 0; i < historySortedDescTimeStamp.length; i++) {
+            const record = historySortedDescTimeStamp[i];
+
+            let row = document.createElement("tr");
+            let rowNumber = document.createElement("td");
+            rowNumber.innerText = i + 1;
+            let rowEvent = document.createElement("td");
+            rowEvent.innerText = record.event;
+            let rowTimestamp = document.createElement("td");
+            let recordTimestamp = new Date(record.timestamp);
+            rowTimestamp.innerText = `${("0" + recordTimestamp.getDate()).slice(-2)}.${("0" + (recordTimestamp.getMonth()+1)).slice(-2)}.${recordTimestamp.getFullYear()}, ${("0" + recordTimestamp.getHours()).slice(-2)}:${("0" + recordTimestamp.getMinutes()).slice(-2)}:${("0" + recordTimestamp.getSeconds()).slice(-2)}`;
+
+            // Add row data to the row parent
+            row.appendChild(rowNumber);
+            row.appendChild(rowEvent);
+            row.appendChild(rowTimestamp);
+
+            // Add row to the table body
+            historyTableBody.appendChild(row);
+        }
 
         // Show history page
         this.showPage("history");
@@ -227,9 +230,6 @@ let PageBuilder = {
         let teamSelectValue = document.querySelector("#search > form > div > #team_select").value;
         let dateSelectValue = document.querySelector("#search > form > div > #date_select").value;
 
-        // Loading animation On
-        this.toggleLoadingAnimation();
-
         // Removes old children
         while (searchResult.firstChild) searchResult.removeChild(searchResult.firstChild);
 
@@ -239,27 +239,35 @@ let PageBuilder = {
         resultsHeader.innerText = "Results:";
         searchResult.appendChild(resultsHeader);
 
+        // Log record to history based on what search criteria is used
+        if (locationSelectValue !== "") {
+            this.logUserInteraction(`A search was made for matches with location: '${locationSelectValue}'`);
+        }
+        if (teamSelectValue !== "") {
+            this.logUserInteraction(`A search was made for matches with team: '${teamSelectValue}'`);
+        }
+        if (dateSelectValue !== "") {
+            this.logUserInteraction(`A search was made for matches with date: '${dateSelectValue}'`);
+        }
+
         // Cycles through every match and makes views
         for (let i = 0; i < matches.length; i++) {
             const match = matches[i];
 
             if (locationSelectValue !== "" && match.location === locationSelectValue) {
-                this.makeDesignOfMatchView(match, searchResult)
+                this.makeDesignOfMatchView(match, searchResult);
             }
             if (teamSelectValue !== "" && (match.away_team_country === teamSelectValue || match.home_team_country === teamSelectValue)) {
-                this.makeDesignOfMatchView(match, searchResult)
+                this.makeDesignOfMatchView(match, searchResult);
             }
             if (dateSelectValue !== "" && new Date(match.datetime).getMonth() === new Date(dateSelectValue).getMonth() && new Date(match.datetime).getDate() === new Date(dateSelectValue).getDate()) {
-                this.makeDesignOfMatchView(match, searchResult)
+                this.makeDesignOfMatchView(match, searchResult);
             }
         }
 
         if (searchResult.children.length === 1) {
-            resultsHeader.innerText = "No results found!"
+            resultsHeader.innerText = "No results found!";
         }
-
-        // Loading animation Off
-        this.toggleLoadingAnimation();
 
         // Reset the search criterias
         for (let i = 0; i < document.querySelectorAll("#search > form > div > select").length; i++) {
@@ -371,9 +379,19 @@ let PageBuilder = {
         wrapper.appendChild(holderMatchData);
 
         destination.appendChild(wrapper);
+    },
+
+    // Log user interactions with the site in history and save it in local storage
+    logUserInteraction: function (event) {
+        // Limits history records to 50
+        if (history.length > 99) {
+            history.shift();
+        }
+        history.push(new HistoryRecord(event));
     }
 }
 
+// Page Events:
 // Showing the details modal for every match with the right content
 $('#detailsModal').on('shown.bs.modal', function (event) {
     // Button that triggered the modal
@@ -394,22 +412,25 @@ $('#detailsModal').on('shown.bs.modal', function (event) {
     modal.find(".modal-body > .container-fluid > #location").text(location);
     modal.find(".modal-body > .container-fluid > #weather").text(weather);
     modal.find(".modal-body > .container-fluid > .row > #home_players > #home_team_name").text(homeTeamName);
-    // Clear previous childs
+    // Clear previous children
     modal.find(".modal-body > .container-fluid > .row > #home_players > ul").empty();
     for (let i = 0; i < homeTeamPlayers.length; i++) {
         const element = homeTeamPlayers[i];
         modal.find(".modal-body > .container-fluid > .row > #home_players > ul").append(`<li class="list-group-item">N${element.shirt_number} ${element.name}, ${element.position}</li>`);
     }
     modal.find(".modal-body > .container-fluid > .row > #away_players > #away_team_name").text(awayTeamName);
-    // Clear previous childs
+    // Clear previous children
     modal.find(".modal-body > .container-fluid > .row > #away_players > ul").empty();
     for (let i = 0; i < awayTeamPlayers.length; i++) {
         const element = awayTeamPlayers[i];
         modal.find(".modal-body > .container-fluid > .row > #away_players > ul").append(`<li class="list-group-item">N${element.shirt_number} ${element.name}, ${element.position}</li>`);
     }
+
+    // Log into history
+    PageBuilder.logUserInteraction(`Button 'More Info' clicked for match: '${title}'`);
 });
 
-//Search only by one criteria
+// Search only by one criteria
 document.querySelector("#search > form > div > #location_select").addEventListener("change", function (event) {
     if (event.target.value !== "") {
         for (let i = 0; i < document.querySelectorAll("#search > form > div > select").length; i++) {
@@ -454,4 +475,9 @@ document.querySelector("#search > form > div > #date_select").addEventListener("
             element.disabled = false;
         }
     }
+});
+
+// Auto hides the navigation on mobile when a link is clicked
+$('.navbar-collapse a').click(function () {
+    $(".navbar-collapse").collapse('hide');
 });
