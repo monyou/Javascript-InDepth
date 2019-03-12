@@ -383,11 +383,13 @@ let PageBuilder = {
 
     // Log user interactions with the site in history and save it in local storage
     logUserInteraction: function (event) {
+        history = JSON.parse(localStorage.getItem("userInput_history") || "[]");
         // Limits history records to 50
         if (history.length > 99) {
             history.shift();
         }
         history.push(new HistoryRecord(event));
+        localStorage.setItem("userInput_history", JSON.stringify(history));
     }
 }
 
